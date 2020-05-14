@@ -16,7 +16,6 @@ module.exports = {
         body.password = hashSync(body.password, salt);
         create(body, (error, results) => {
             if (error) {
-                console.log(error);
                 return res.status(500).json({
                     success: 0,
                     message: "Database connection errror"
@@ -43,13 +42,13 @@ module.exports = {
             const result = compareSync(body.password, results.password);
             if (result) {
                 results.password = undefined;
-                const jsontoken = sign({ result: results }, "qwe1234", {
-                    expiresIn: "1h"
+                const jsonToken = sign({ result: results }, process.env.JWT_KEY, {
+                    expiresIn: "14d"
                 });
                 return res.json({
                     success: 1,
-                    message: "login successfully",
-                    token: jsontoken
+                    message: "Login successful",
+                    token: jsonToken
                 });
             } else {
                 return res.json({
@@ -69,7 +68,7 @@ module.exports = {
             if (!results) {
                 return res.json({
                     success: 0,
-                    message: "Record not Found"
+                    message: "Record not found"
                 });
             }
             results.password = undefined;
@@ -102,7 +101,7 @@ module.exports = {
             }
             return res.json({
                 success: 1,
-                message: "updated successfully"
+                message: "Update successful"
             });
         });
     },
@@ -116,12 +115,12 @@ module.exports = {
             if (!results) {
                 return res.json({
                     success: 0,
-                    message: "Record Not Found"
+                    message: "Record not found"
                 });
             }
             return res.json({
                 success: 1,
-                message: "user deleted successfully"
+                message: "User successfully deleted"
             });
         });
     }
