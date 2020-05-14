@@ -8,8 +8,8 @@ module.exports = {
             jwt.verify(token, process.env.JWT_KEY, (error, decoded) => {
                 if (error) {
                     return res.json({
-                        success: 0,
-                        message: "Invalid Token..."
+                        code: 401,
+                        message: "Invalid token"
                     });
                 } else {
                     req.decoded = decoded;
@@ -18,8 +18,8 @@ module.exports = {
             });
         } else {
             return res.json({
-                success: 0,
-                message: "Access Denied! Unauthorized User"
+                code: 401,
+                message: "Unauthorized user"
             });
         }
     }

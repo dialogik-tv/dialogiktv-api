@@ -16,27 +16,29 @@ module.exports = {
         body.password = hashSync(body.password, salt);
         create(body, (error, results) => {
             if (error) {
+                console.log(error);
                 return res.status(500).json({
-                    success: 0,
-                    message: "Database connection errror"
+                    code: 500,
+                    message: "Database error"
                 });
             }
             return res.status(200).json({
-                success: 1,
+                code: 200,
                 data: results
             });
         });
     },
     login: (req, res) => {
         const body = req.body;
+        const invalidMessage = "Invalid email or password";
         getUserByUserEmail(body.email, (error, results) => {
             if (error) {
                 console.log(error);
             }
             if (!results) {
                 return res.json({
-                    success: 0,
-                    data: "Invalid email or password"
+                    code: 401,
+                    message: invalidMessage
                 });
             }
             const result = compareSync(body.password, results.password);
@@ -46,14 +48,14 @@ module.exports = {
                     expiresIn: "14d"
                 });
                 return res.json({
-                    success: 1,
+                    code: 200,
                     message: "Login successful",
                     token: jsonToken
                 });
             } else {
                 return res.json({
-                    success: 0,
-                    data: "Invalid email or password"
+                    code: 401,
+                    message: "Invalid email or password"
                 });
             }
         });
@@ -67,13 +69,13 @@ module.exports = {
             }
             if (!results) {
                 return res.json({
-                    success: 0,
+                    code: 404,
                     message: "Record not found"
                 });
             }
             results.password = undefined;
             return res.json({
-                success: 1,
+                code: 200,
                 data: results
             });
         });
@@ -85,7 +87,7 @@ module.exports = {
                 return;
             }
             return res.json({
-                success: 1,
+                code: 200,
                 data: results
             });
         });
@@ -100,7 +102,7 @@ module.exports = {
                 return;
             }
             return res.json({
-                success: 1,
+                code: 200,
                 message: "Update successful"
             });
         });
@@ -114,12 +116,12 @@ module.exports = {
             }
             if (!results) {
                 return res.json({
-                    success: 0,
+                    code: 404,
                     message: "Record not found"
                 });
             }
             return res.json({
-                success: 1,
+                code: 200,
                 message: "User successfully deleted"
             });
         });
