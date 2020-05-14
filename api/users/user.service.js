@@ -1,7 +1,7 @@
 const pool = require("../../config/database");
 
 module.exports = {
-    create: (data, callBack) => {
+    create: (data, callback) => {
         pool.query(
             `insert into registration
                 (firstname, lastname, gender, email, password)
@@ -16,49 +16,49 @@ module.exports = {
             ],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results);
+                return callback(null, results);
             }
         );
     },
-    getUserByUserEmail: (email, callBack) => {
+    getUserByUserEmail: (email, callback) => {
         pool.query(
             `select * from registration where email = ?`,
             [email],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results[0]);
+                return callback(null, results[0]);
             }
         );
     },
-    getUserByUserId: (id, callBack) => {
+    getUserByUserId: (id, callback) => {
         pool.query(
             `select id,firstname,lastname,gender,email from registration where id = ?`,
             [id],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results[0]);
+                return callback(null, results[0]);
             }
         );
     },
-    getUsers: callBack => {
+    getUsers: callback => {
         pool.query(
             `select id,firstname,lastname,gender,email from registration`,
             [],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results);
+                return callback(null, results);
             }
         );
     },
-    updateUser: (data, callBack) => {
+    updateUser: (data, callback) => {
         pool.query(
             `update registration set firstname=?, lastname=?, gender=?, email=?, password=? where id = ?`,
             [
@@ -71,21 +71,21 @@ module.exports = {
             ],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results[0]);
+                return callback(null, results[0]);
             }
         );
     },
-    deleteUser: (data, callBack) => {
+    deleteUser: (data, callback) => {
         pool.query(
             `delete from registration where id = ?`,
             [data.id],
             (error, results, fields) => {
                 if (error) {
-                    callBack(error);
+                    callback(error);
                 }
-                return callBack(null, results[0]);
+                return callback(null, results[0]);
             }
         );
     }
