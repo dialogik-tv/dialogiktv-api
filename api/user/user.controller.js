@@ -12,7 +12,14 @@ module.exports = {
             where: {
                 username: owner
             }
-        }).then( (result) => res.json(result) )
+        }).then( (result) => {
+            let data = result.dataValues;
+
+            // Don't show password or deletedAt
+            delete data.password;
+            delete data.deletedAt;
+            return res.json(data);
+        })
     },
     getUserByUserId: (req, res) => {
         const id = req.params.id;
