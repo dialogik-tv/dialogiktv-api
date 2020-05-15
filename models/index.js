@@ -32,16 +32,19 @@ sequelize = new Sequelize(
 fs
     .readdirSync(__dirname)
     .filter(file => {
+        console.log(`Adding ${file} to filter`);
         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
     })
     .forEach(file => {
         const model = sequelize['import'](path.join(__dirname, file));
+        console.log(`Adding ${model.name} to db`);
         db[model.name] = model;
     });
 
 // Associate db object to models
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
+        console.log(`Adding db association to ${modelName}`)
         db[modelName].associate(db);
     }
 });

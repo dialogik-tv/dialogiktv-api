@@ -7,9 +7,8 @@ module.exports = {
             token = token.slice(7);
             jwt.verify(token, process.env.JWT_KEY, (error, decoded) => {
                 if (error) {
-                    return res.json({
-                        code: 401,
-                        message: "Invalid token"
+                    return res.status(401).json({
+                        error: "Invalid token"
                     });
                 } else {
                     req.decoded = decoded;
@@ -17,9 +16,8 @@ module.exports = {
                 }
             });
         } else {
-            return res.json({
-                code: 401,
-                message: "Unauthorized user"
+            return res.status(401).json({
+                error: "Unauthorized user"
             });
         }
     }

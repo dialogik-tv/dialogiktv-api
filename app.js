@@ -1,14 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const db = require ("./models");
-// const userRouter = require("./api/users/user.router");
+const userRouter = require("./api/user/user.router");
 
 app.use(express.json());
 
 console.log('App starting...');
 
-app.use("/api/users", userRouter);
+app.use("/api", userRouter);
+// // app.use("/api/tool", toolRouter);
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || '0.0.0.0';
