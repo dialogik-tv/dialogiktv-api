@@ -51,7 +51,7 @@ module.exports = {
 
                 if (check) {
                     result.password = undefined;
-                    const jsonToken = sign({ result: result }, process.env.JWT_KEY, {
+                    const jsonToken = sign({ result: result }, process.env.JWT_SECRET, {
                         expiresIn: "14d"
                     });
                     return res.json({
