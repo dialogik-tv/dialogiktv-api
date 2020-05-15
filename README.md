@@ -13,3 +13,9 @@ Based on Node.js with Express.js and a MySQL database, this API servers as the m
 ## Deploy to Heroku
 
 _tbd_
+
+# FAQ
+
+## Known problems when developing on Windows
+
+* [How to get consistent lowercase table names with XAMPP on Windows](https://stackoverflow.com/questions/8550789/where-to-change-the-value-of-lower-case-table-names-2-on-windows-xampp)
