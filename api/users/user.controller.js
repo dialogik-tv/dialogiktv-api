@@ -6,7 +6,7 @@ const {
     updateUser,
     deleteUser
 } = require("./user.service");
-const { hashSync, genSaltSync, compareSync } = require("bcrypt");
+const { hashSync, genSaltSync, compareSync } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 
 module.exports = {

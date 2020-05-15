@@ -2,6 +2,25 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const userRouter = require("./api/users/user.router");
+import db from "./models";
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
+    host: process.env.MYSQL_HOST,
+    dialect: 'mysql'
+});
+
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(error => {
+        console.error('Unable to connect to the database:', error);
+    });
+
+sequelize.sync().then(() => {
+    console.log('DB synced.');
+});
 
 app.use(express.json());
 
@@ -13,3 +32,5 @@ const host = process.env.HOST || '0.0.0.0';
 app.listen(port, host, () => {
     console.log("Server up and running on port ", port);
 });
+
+sequelize.sync();
