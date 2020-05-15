@@ -1,12 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const authRouter = require("./api/auth/auth.router");
 const userRouter = require("./api/user/user.router");
 
 app.use(express.json());
 
 console.log('App starting...');
 
+app.use("/api/auth", authRouter);
 app.use("/api", userRouter);
 // // app.use("/api/tool", toolRouter);
 
