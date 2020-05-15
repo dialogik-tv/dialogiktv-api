@@ -8,8 +8,9 @@ app.use(express.json());
 
 console.log('App starting...');
 
-app.use("/api/auth", authRouter);
-app.use("/api", userRouter);
+let apiPrefix = '/api';
+app.use(apiPrefix, authRouter);
+app.use(apiPrefix, userRouter);
 // // app.use("/api/tool", toolRouter);
 
 const port = process.env.PORT || 3000;
