@@ -85,22 +85,43 @@ module.exports = {
     },
     updateUser: (req, res) => {
         const body = req.body;
-        const salt = genSaltSync(10);
-        body.password = hashSync(body.password, salt);
+        const owner = req.decoded.result.username;
+
+        // Hash password if passed
+        if(typeof body.password !== 'undefined') {
+            const salt = genSaltSync(10);
+            body.password = hashSync(body.password, salt);
+        }
+
+        // Update user
         db.User.update(body, {
             where: {
-                username: req.decoded.result.username
+                username: owner
             }
-        }).then( (result) => res.json(result) )
+        }).then( (result) => {
+            result = result[0];
+
+            // In case owner's username does not match any entry in database
+            if(result !== 1) {
+                return res.status(500).json({
+                    error: `Error updating ${owner}`
+                })
+            }
+
+            // Else
+            let message = `User ${owner} successfully updated`;
+            return res.json({message: message});
+        })
         .catch( (e) => {
-            console.log('Error updating user', e);
+            let error = 'Error updating user';
+            console.log(error, e);
+            return res.status(500).json( {error:error} );
         });
     },
     deleteUser: (req, res) => {
-        const data = req.body;
         db.User.destroy({
             where: {
-                id: req.params.id
+                username: req.decoded.result.username
             }
         }).then( (result) => res.json(result) );
     }
