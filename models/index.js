@@ -8,15 +8,24 @@ const env = process.env.NODE_ENV || 'development';
 const db = {};
 
 let options = {
+    // Set database host (default to `localhost`)
+    host: process.env.MYSQL_HOST || 'localhost',
+
+    // Set ORM engine
+    dialect: 'mysql',
+
+    // Fetch timezone from .env (or use something specific, I use the lovely
+    // capital of Germany as default as an homage to this city)
+    timezone: process.env.TZ || 'Europe/Berlin',
+
+    // Model default options
     define: {
         // Prevent sequelize from pluralizing table names
         freezeTableName: true,
 
         // Soft deletion only! (add deletedAt timestamp)
         paranoid: true
-    },
-    host: process.env.MYSQL_HOST,
-    dialect: 'mysql'
+    }
 }
 
 // Initialize connection
