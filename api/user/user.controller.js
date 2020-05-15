@@ -67,9 +67,10 @@ module.exports = {
         );
     },
     getMe: (req, res) => {
+        const owner = req.decoded.result.username;
         db.User.findOne({
             where: {
-                username: req.decoded.result.username
+                username: owner
             }
         }).then( (result) => res.json(result) )
     },
@@ -119,9 +120,10 @@ module.exports = {
         });
     },
     deleteUser: (req, res) => {
+        const owner = req.decoded.result.username;
         db.User.destroy({
             where: {
-                username: req.decoded.result.username
+                username: owner
             }
         }).then( (result) => res.json(result) );
     }
