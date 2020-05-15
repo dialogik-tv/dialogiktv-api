@@ -75,13 +75,29 @@ module.exports = {
         }).then( (result) => res.json(result) )
     },
     getUserByUserId: (req, res) => {
-        db.User.findByPk(req.body.id).then( (result) => {
+        const id = req.params.id;
+        db.User.findByPk(id).then( (result) => {
             if(!result) {
                 return res.status(404).json({
                     message: `No user found with id ${id}`
                 })
             }
-            return res.json(result)
+            return res.json(result);
+        });
+    },
+    getUserByUsername: (req, res) => {
+        const username = req.params.username;
+        db.User.findOne({
+            where: {
+                username: username,
+            }
+        }).then( (result) => {
+            if(!result) {
+                return res.status(404).json({
+                    message: `No user found with username ${username}`
+                })
+            }
+            return res.json(result);
         });
     },
     updateUser: (req, res) => {
