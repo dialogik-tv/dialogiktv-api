@@ -14,8 +14,6 @@ module.exports = {
                 "message": `User ${body.username} successfully created`
             }) )
             .catch( (e) => {
-                console.log();
-
                 if(e.original.code == 'ER_DUP_ENTRY') {
                     return res.status(409).json({
                         "error": 'Duplicate constraint violation',
@@ -45,8 +43,16 @@ module.exports = {
                 const check = compareSync(body.password, result.password);
 
                 if (check) {
-                    result.password = undefined;
-                    const jsonToken = sign({ result: result }, process.env.JWT_SECRET, {
+                    let data = {
+                        id: result.dataValues.id,
+                        firstname: result.dataValues.firstname,
+                        lastname: result.dataValues.lastname,
+                        email: result.dataValues.email,
+                        status: result.dataValues.status,
+                        createdAt: result.dataValues.createdAt,
+                        updatedAt: result.dataValues.updatedAt
+                    };
+                    const jsonToken = sign({ user: data }, process.env.JWT_SECRET, {
                         expiresIn: "14d"
                     });
                     return res.json({

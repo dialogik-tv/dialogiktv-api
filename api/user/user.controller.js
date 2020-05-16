@@ -7,7 +7,7 @@ module.exports = {
         db.User.findAll().then( (result) => res.json(result) );
     },
     getMe: (req, res) => {
-        const owner = req.decoded.result.username;
+        const owner = req.decoded.user.username;
         db.User.findOne({
             where: {
                 username: owner
@@ -49,7 +49,7 @@ module.exports = {
     },
     updateUser: (req, res) => {
         const body = req.body;
-        const owner = req.decoded.result.username;
+        const owner = req.decoded.user.username;
 
         // Hash password if passed
         if(typeof body.password !== 'undefined') {
@@ -83,7 +83,7 @@ module.exports = {
         });
     },
     deleteUser: (req, res) => {
-        const owner = req.decoded.result.username;
+        const owner = req.decoded.user.username;
         db.User.destroy({
             where: {
                 username: owner
