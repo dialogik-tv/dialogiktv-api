@@ -3,7 +3,9 @@ const db = require ("../../models");
 
 module.exports = {
     getTools: (req, res) => {
-        db.Tool.findAll().then( (result) => res.json(result) );
+        db.Tool.findAll({include:db.User}).then( (result) => {
+            return res.json(result)
+        } );
     },
     createTool: (req, res) => {
         const body = req.body;
@@ -43,7 +45,6 @@ module.exports = {
                     message: `No tool found with slug ${slug}`
                 })
             }
-            delete result.UserId;
             return res.json(result);
         })
     },

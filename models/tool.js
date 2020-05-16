@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         var values = Object.assign({}, this.get());
         delete values.id;
         delete values.deletedAt;
+        delete values.UserId;
         return values;
     }
 
