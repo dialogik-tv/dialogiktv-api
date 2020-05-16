@@ -7,10 +7,10 @@ module.exports = {
         db.User.findAll().then( (result) => res.json(result) );
     },
     getMe: (req, res) => {
-        const owner = req.decoded.user.username;
+        const owner = req.decoded.user.id;
         db.User.findOne({
             where: {
-                username: owner
+                id: owner
             }
         }).then( (result) => {
             let data = result.dataValues;
@@ -49,7 +49,8 @@ module.exports = {
     },
     updateUser: (req, res) => {
         const body = req.body;
-        const owner = req.decoded.user.username;
+        const owner = req.decoded.user.id;
+        const username = req.decoded.user.username;
 
         // Hash password if passed
         if(typeof body.password !== 'undefined') {
@@ -60,20 +61,20 @@ module.exports = {
         // Update user
         db.User.update(body, {
             where: {
-                username: owner
+                id: owner
             }
         }).then( (result) => {
             result = result[0];
 
-            // In case owner's username does not match any entry in database
+            // In case owner's id does not match any entry in database
             if(result !== 1) {
                 return res.status(500).json({
-                    error: `Error updating ${owner}`
+                    error: `Error updating ${username}`
                 })
             }
 
             // Else
-            let message = `User ${owner} successfully updated`;
+            let message = `User ${username} successfully updated`;
             return res.json({message: message});
         })
         .catch( (e) => {
@@ -83,10 +84,10 @@ module.exports = {
         });
     },
     deleteUser: (req, res) => {
-        const owner = req.decoded.user.username;
+        const owner = req.decoded.user.id;
         db.User.destroy({
             where: {
-                username: owner
+                id: owner
             }
         }).then( (result) => res.json(result) );
     }
