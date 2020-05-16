@@ -19,16 +19,16 @@ module.exports = {
         body.UserId = owner;
         body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
         body.slug = body.slug + '-' + suffix;
-        console.log(body.slug);
 
         db.Tool.create(body)
         .then( (result) => res.json({
             "message": `Tool ${body.title} successfully created`
         }) )
         .catch( (e) => {
-            console.log(e);
+            let error = 'Database error, could not create';
+            console.log(error, e);
             return res.status(500).json({
-                "error": 'Database error, could not create'
+                "error": error
             })
         })
     },
