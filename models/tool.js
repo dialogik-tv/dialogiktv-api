@@ -2,9 +2,17 @@
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const Tool = sequelize.define('Tool', {
-        title: DataTypes.STRING,
+        title: {
+            allowNull: false,
+            type: DataTypes.STRING
+        },
+        slug: {
+            allowNull: false,
+            type: DataTypes.STRING,
+            unique: true
+        },
         description: DataTypes.TEXT,
-        link: DataTypes.TEXT
+        link: DataTypes.STRING
     }, {});
 
     // Associations
@@ -16,5 +24,13 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+
+    Tool.prototype.toJSON = function () {
+        var values = Object.assign({}, this.get());
+        delete values.id;
+        delete values.deletedAt;
+        return values;
+    }
+
     return Tool;
 };

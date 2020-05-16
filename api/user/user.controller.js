@@ -1,4 +1,4 @@
-const { hashSync, genSaltSync, compareSync } = require("bcryptjs");
+const { hashSync, genSaltSync } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
 

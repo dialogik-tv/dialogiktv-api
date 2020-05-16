@@ -1,4 +1,3 @@
-const { hashSync, genSaltSync, compareSync } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
 
@@ -10,8 +9,15 @@ module.exports = {
         const body = req.body;
         const owner = req.decoded.user.id;
 
+        let suffix = ''
+        while (suffix.length < 60) {
+            suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '').substr(0, 5);
+        }
+
         body.UserId = owner;
-        console.log(body);
+        body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
+        body.slug = body.slug + '-' + suffix;
+        console.log(body.slug);
 
         db.Tool.create(body)
         .then( (result) => res.json({
@@ -24,26 +30,32 @@ module.exports = {
             })
         })
     },
-    getToolById: (req, res) => {
-        const id = req.params.id;
-        db.Tool.findByPk(id).then( (result) => {
+    getToolBySlug: (req, res) => {
+        const slug = req.params.slug;
+        db.Tool.findOne({
+            where: {
+                slug: slug
+            },
+            include: db.User
+        }).then( (result) => {
             if(!result) {
                 return res.status(404).json({
-                    message: `No tool found with id ${id}`
+                    message: `No tool found with slug ${slug}`
                 })
             }
+            delete result.UserId;
             return res.json(result);
-        });
+        })
     },
     updateTool: (req, res) => {
-        const id = req.params.id;
+        const slug = req.params.slug;
         const body = req.body;
         const owner = req.decoded.user.id;
 
         // Update user
         db.Tool.update(body, {
             where: {
-                id: id,
+                slug: slug,
                 UserId: owner
             }
         }).then( (result) => {
@@ -56,21 +68,21 @@ module.exports = {
             }
 
             // Else
-            let message = `Tool with id #${id} successfully updated`;
+            let message = `Tool \`${slug}\` successfully updated`;
             return res.json({message: message});
         })
         .catch( (e) => {
-            let error = `Error updating tool id #${id}`;
+            let error = `Error updating tool \`${slug}\``;
             console.log(error, e);
             return res.status(500).json( {error:error} );
         });
     },
     deleteTool: (req, res) => {
-        const id = req.params.id;
+        const slug = req.params.slug;
         const owner = req.decoded.user.id;
         db.Tool.destroy({
             where: {
-                id: id,
+                slug: slug,
                 UserId: owner
             }
         }).then( (result) => {
@@ -78,7 +90,7 @@ module.exports = {
                 let error = 'There is no matching item, maybe you\'re not the owner of the item?';
                 return res.status(404).json({error:error});
             }
-            return res.json({message:`Tool id #${id} successfully deleted`});
+            return res.json({message:`Tool \`${slug}\` successfully deleted`});
         } );
     }
 };
