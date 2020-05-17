@@ -4,7 +4,8 @@ const db = require ("../../models");
 module.exports = {
     getTools: (req, res) => {
         db.Tool.findAll({
-            include:db.User,
+            include: [{ model: db.User, attributes: ['username']}],
+            attributes: ['title', 'slug', 'vendor', 'vendorLink'],
             order: [['createdAt', 'DESC']]
         }).then( (result) => {
             return res.json(result)
@@ -41,7 +42,7 @@ module.exports = {
             where: {
                 slug: slug
             },
-            include: db.User
+            include: [{ model: db.User, attributes: ['username']}]
         }).then( (result) => {
             if(!result) {
                 return res.status(404).json({
@@ -52,8 +53,8 @@ module.exports = {
         })
     },
     updateTool: (req, res) => {
-        const slug = req.params.slug;
-        const body = req.body;
+        const slug  = req.params.slug;
+        const body  = req.body;
         const owner = req.decoded.user.id;
 
         // Update user
@@ -67,23 +68,24 @@ module.exports = {
             result = result[0];
             if(result !== 1) {
                 return res.status(500).json({
-                    error: `Error updating ${owner}`
+                    error: `Error updating \`${slug}\``
                 })
             }
 
-            // Else
             let message = `Tool \`${slug}\` successfully updated`;
-            return res.json({message: message});
+            return res.json({ message: message });
         })
         .catch( (e) => {
             let error = `Error updating tool \`${slug}\``;
             console.log(error, e);
-            return res.status(500).json( {error:error} );
+            return res.status(500).json({ error: error });
         });
     },
     deleteTool: (req, res) => {
-        const slug = req.params.slug;
+        const slug  = req.params.slug;
         const owner = req.decoded.user.id;
+
+        // Delete User
         db.Tool.destroy({
             where: {
                 slug: slug,
@@ -92,7 +94,7 @@ module.exports = {
         }).then( (result) => {
             if(result === 0) {
                 let error = 'There is no matching item, maybe you\'re not the owner of the item?';
-                return res.status(404).json({error:error});
+                return res.status(404).json({ error: error });
             }
             return res.json({message:`Tool \`${slug}\` successfully deleted`});
         } );
