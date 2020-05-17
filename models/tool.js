@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         },
         description: DataTypes.TEXT,
-        link: DataTypes.STRING
+        link: DataTypes.STRING,
+        vendor: DataTypes.STRING,
+        vendorLink: DataTypes.STRING
     }, {});
 
     // Associations
