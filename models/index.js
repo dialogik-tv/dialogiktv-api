@@ -8,12 +8,6 @@ const env = process.env.NODE_ENV || 'development';
 const db = {};
 
 let options = {
-    // Set database host (default to `localhost`)
-    host: process.env.MYSQL_HOST || 'localhost',
-
-    // Set ORM engine
-    dialect: 'mysql',
-
     // Fetch timezone from .env (or use something specific, I use the lovely
     // capital of Germany as default as an homage to this city)
     timezone: process.env.TZ || 'Europe/Berlin',
@@ -31,7 +25,7 @@ let options = {
 // Initialize connection
 let sequelize;
 sequelize = new Sequelize(
-    process.env.DB_CONNECTION,
+    `${process.env.DB_ENGINE}://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || 3306}/${process.env.DB_DATABASE}`,
     options
 );
 
