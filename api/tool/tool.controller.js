@@ -3,7 +3,10 @@ const db = require ("../../models");
 
 module.exports = {
     getTools: (req, res) => {
-        db.Tool.findAll({include:db.User}).then( (result) => {
+        db.Tool.findAll({
+            include:db.User,
+            order: [['createdAt', 'DESC']]
+        }).then( (result) => {
             return res.json(result)
         } );
     },
