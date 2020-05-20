@@ -16,7 +16,7 @@ module.exports = {
         const owner = req.decoded.user.id;
 
         let suffix = ''
-        while (suffix.length < 60) {
+        while (suffix.length < 24) {
             suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '').substr(0, 5);
         }
 
