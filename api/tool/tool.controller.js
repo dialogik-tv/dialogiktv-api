@@ -5,7 +5,7 @@ module.exports = {
     getTools: (req, res) => {
         db.Tool.findAll({
             include: [{ model: db.User, attributes: ['username']}],
-            attributes: ['title', 'slug', 'vendor', 'vendorLink'],
+            attributes: ['title', 'description', 'slug', 'vendor', 'vendorLink'],
             order: [['createdAt', 'DESC']]
         }).then( (result) => {
             return res.json(result)
