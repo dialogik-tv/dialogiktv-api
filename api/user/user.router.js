@@ -15,7 +15,7 @@ router.patch("/user/edit", checkToken, updateUser);
 router.delete("/user/delete", checkToken, deleteUser);
 
 // Public routes
-router.get("/users", getUsers);
+router.get("/users", checkToken, getUsers);
 router.get("/user/:username", getUserByUsername);
 
 module.exports = router;
