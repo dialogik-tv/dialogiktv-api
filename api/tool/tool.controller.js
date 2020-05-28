@@ -49,7 +49,14 @@ module.exports = {
             where: {
                 slug: slug
             },
-            include: [{ model: db.User, attributes: ['username']}]
+            include: [
+                { model: db.User, attributes: ['username']},
+                {
+                    model: db.Tag,
+                    attributes: ['name'],
+                    through: { attributes: [] }
+                },
+            ]
         }).then( (result) => {
             if(!result) {
                 return res.status(404).json({
