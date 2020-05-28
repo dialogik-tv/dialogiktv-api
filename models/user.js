@@ -23,9 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER
         }
     }, {
-        scopes: {
-
-        }
+        scopes: {}
     });
 
     // Associations

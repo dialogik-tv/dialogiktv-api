@@ -20,11 +20,13 @@ module.exports = (sequelize, DataTypes) => {
     // Associations
     Tool.associate = function(models) {
         Tool.belongsTo(models.User, {
-            onDelete: "CASCADE",
-            foreignKey: {
-                allowNull: false
-            }
+            onUpdate: 'CASCADE',
+            onDelete: "SET NULL"
         });
+    };
+
+    Tool.associate = function(models) {
+        Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
     };
 
     Tool.prototype.toJSON = function () {
