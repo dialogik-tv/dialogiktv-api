@@ -4,8 +4,8 @@ const db = require ("../../models");
 module.exports = {
     getTools: (req, res) => {
         db.Tool.findAll({
-            include: [{ model: User, attributes: ['username']}],
-            attributes: ['title', 'description', 'slug', 'vendor', 'vendorLink'],
+            // include: [{ model: db.User, attributes: ['username']}],
+            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink'],
             order: [['createdAt', 'DESC']]
         }).then( (result) => {
             return res.json(result)

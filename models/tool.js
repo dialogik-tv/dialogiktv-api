@@ -33,12 +33,11 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     Tool.associate = function(models) {
-        Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
+        Tool.belongsToMany(models.Tag, { through: 'ToolTag', foreignKey: 'ToolId' });
     };
 
     Tool.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
-        delete values.id;
         delete values.deletedAt;
         delete values.UserId;
         return values;

@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
 
     User.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
-        delete values.id;
         delete values.password;
         delete values.email;
         delete values.deletedAt;
