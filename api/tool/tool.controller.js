@@ -6,7 +6,11 @@ module.exports = {
         db.Tool.findAll({
             include: [
                 { model: db.User, attributes: ['username']},
-                { model: db.Tag, attributes: ['name']},
+                {
+                    model: db.Tag,
+                    attributes: ['name'],
+                    through: { attributes: [] }
+                },
             ],
             attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink'],
             order: [['createdAt', 'DESC']]
