@@ -2,6 +2,13 @@
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const Tag = sequelize.define('Tag', {
+        id: {
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
+            allowNull: false,
+            autoIncrement: false
+        },
         name: {
             allowNull: false,
             type: DataTypes.STRING

@@ -2,6 +2,13 @@
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const Tool = sequelize.define('Tool', {
+        id: {
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
+            allowNull: false,
+            autoIncrement: false
+        },
         title: {
             allowNull: false,
             type: DataTypes.STRING
@@ -21,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     Tool.associate = function(models) {
         Tool.belongsTo(models.User, {
             onUpdate: 'CASCADE',
-            onDelete: "SET NULL"
+            onDelete: 'SET NULL'
         });
     };
 
