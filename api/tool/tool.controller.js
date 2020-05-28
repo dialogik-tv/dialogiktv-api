@@ -21,7 +21,6 @@ module.exports = {
     getToolsByTag: (req, res) => {
         const tag = req.params.tag;
         db.Tag.findOne({
-        // db.Tool.findAll({
             where: {
                 name: tag
             },
