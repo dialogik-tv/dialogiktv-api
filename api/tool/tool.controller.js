@@ -28,16 +28,16 @@ module.exports = {
         body.slug = body.slug + '-' + suffix;
 
         db.Tool.create(body)
-        .then( (result) => res.json({
-            "message": `Tool ${body.title} successfully created`
-        }) )
-        .catch( (e) => {
-            let error = 'Database error, could not create';
-            console.log(error, e);
-            return res.status(500).json({
-                "error": error
-            })
-        })
+            .then( (result) => res.json({
+                "message": `Tool ${body.title} successfully created`
+            }) )
+            .catch( (e) => {
+                const error = 'Database error, could not create';
+                console.log(error, e);
+                return res.status(500).json({
+                    "error": error
+                })
+            });
     },
     getToolBySlug: (req, res) => {
         const slug = req.params.slug;
@@ -56,14 +56,14 @@ module.exports = {
         })
     },
     updateTool: (req, res) => {
-        const slug  = req.params.slug;
+        const id  = req.params.id;
         const body  = req.body;
         const owner = req.decoded.user.id;
 
         // Update user
         db.Tool.update(body, {
             where: {
-                slug: slug,
+                id: id,
                 UserId: owner
             }
         }).then( (result) => {
@@ -75,11 +75,11 @@ module.exports = {
                 })
             }
 
-            let message = `Tool \`${slug}\` successfully updated`;
+            const message = `Tool \`${slug}\` successfully updated`;
             return res.json({ message: message });
         })
         .catch( (e) => {
-            let error = `Error updating tool \`${slug}\``;
+            const error = `Error updating tool \`${slug}\``;
             console.log(error, e);
             return res.status(500).json({ error: error });
         });
@@ -96,10 +96,53 @@ module.exports = {
             }
         }).then( (result) => {
             if(result === 0) {
-                let error = 'There is no matching item, maybe you\'re not the owner of the item?';
+                const error = 'There is no matching item, maybe you\'re not the owner of the item?';
                 return res.status(404).json({ error: error });
             }
             return res.json({message:`Tool \`${slug}\` successfully deleted`});
         } );
-    }
+    },
+    addTag: (req, res) => {
+        const toolId   = req.body.id;
+        const tagInput = req.body.tag;
+        // const owner  = req.decoded.user.id;
+
+        db.Tool.findByPk(toolId)
+            .then( (tool) => {
+                if(!tool) {
+                    return res.status(404).json({
+                        message: `No tool found with id ${toolId}`
+                    });
+                }
+
+                const error = 'Database error, could not add tag – please try again later';
+                db.Tag.create({name: tagInput})
+                    .then( (newTag) => {
+                        tool.addTag(newTag);
+                        return res.json({message:`Tag \`${tagInput}\` successfully added to \`${tool.title}\``});
+                    })
+                    .catch( (e) => {
+                        // Tag already exists, but let's create association
+                        if(e.original.code == 'ER_DUP_ENTRY') {
+                            db.Tag.findOne({where:{name:tagInput}})
+                                .then( (tag) => {
+                                    try {
+                                        tool.addTag(tag);
+                                        return res.json({message:`Tag \`${tagInput}\` successfully added to \`${tool.title}\``});
+                                    } catch (e) {
+                                        console.log(error, e);
+                                        return res.status(500).json({
+                                            "error": error
+                                        });
+                                    }
+                                });
+                        } else {
+                            console.log(error, e);
+                            return res.status(500).json({
+                                "error": error
+                            });
+                        }
+                    });
+            });
+    },
 };

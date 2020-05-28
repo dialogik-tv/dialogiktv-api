@@ -11,14 +11,15 @@ module.exports = (sequelize, DataTypes) => {
         },
         name: {
             allowNull: false,
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            unique: true
         },
         description: DataTypes.TEXT
     }, {});
 
     // Associations
     Tag.associate = function(models) {
-        Tag.belongsToMany(models.Tool, { through: 'ToolTag', foreignKey: 'ToolId' });
+        Tag.belongsToMany(models.Tool, { through: 'ToolTag' });
     };
 
     // Modify JSON output

@@ -30,8 +30,8 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: "CASCADE",
             onDelete: "SET NULL"
         });
-        
-        Tool.belongsToMany(models.Tag, { through: 'ToolTag', foreignKey: 'TagId' });
+
+        Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
     };
 
     // Modify JSON output

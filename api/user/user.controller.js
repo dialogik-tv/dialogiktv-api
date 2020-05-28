@@ -78,7 +78,7 @@ module.exports = {
             return res.json({message: message});
         })
         .catch( (e) => {
-            let error = 'Error updating user';
+            let error = `Error updating user ${username}`;
             console.log(error, e);
             return res.status(500).json( {error:error} );
         });

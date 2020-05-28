@@ -45,6 +45,7 @@ module.exports = {
                 if (check) {
                     let data = {
                         id: result.dataValues.id,
+                        username: result.dataValues.username,
                         firstname: result.dataValues.firstname,
                         lastname: result.dataValues.lastname,
                         email: result.dataValues.email,
