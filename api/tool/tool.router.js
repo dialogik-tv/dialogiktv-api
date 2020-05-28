@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { checkToken } = require("../../auth/token_validation");
 const {
     createTool,
+    getToolsByTag,
     getTools,
     getToolBySlug,
     updateTool,
@@ -11,6 +12,7 @@ const {
 
 // Tool routes
 router.post("/tool/create", checkToken, createTool);
+router.get("/tools/tag/:tag", getToolsByTag);
 router.get("/tools", getTools);
 router.get("/tool/:slug", getToolBySlug);
 router.patch("/tool/edit/:slug", checkToken, updateTool);

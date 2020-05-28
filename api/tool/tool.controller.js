@@ -18,6 +18,34 @@ module.exports = {
             return res.json(result)
         } );
     },
+    getToolsByTag: (req, res) => {
+        const tag = req.params.tag;
+        db.Tag.findOne({
+        // db.Tool.findAll({
+            where: {
+                name: tag
+            },
+            include: [
+                {
+                    model: db.Tool,
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        }
+                    ],
+                    through: { attributes: [] }
+                },
+            ],
+        }).then( (result) => {
+            return res.json(result);
+        } );
+    },
     createTool: (req, res) => {
         const body = req.body;
         const owner = req.decoded.user.id;
