@@ -38,12 +38,14 @@ fs
     .forEach(file => {
         const model = sequelize['import'](path.join(__dirname, file));
         db[model.name] = model;
+        console.log(model.name + ' parsed');
     });
 
 // Associate db object to models
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
         db[modelName].associate(db);
+        console.log(modelName + ' associations added');
     }
 });
 

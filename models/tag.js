@@ -18,9 +18,10 @@ module.exports = (sequelize, DataTypes) => {
 
     // Associations
     Tag.associate = function(models) {
-        Tag.belongsToMany(models.Tool, { through: 'ToolTag', foreignKey: 'TagId' });
+        Tag.belongsToMany(models.Tool, { through: 'ToolTag', foreignKey: 'ToolId' });
     };
 
+    // Modify JSON output
     Tag.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;

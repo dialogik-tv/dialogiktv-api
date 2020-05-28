@@ -27,15 +27,14 @@ module.exports = (sequelize, DataTypes) => {
     // Associations
     Tool.associate = function(models) {
         Tool.belongsTo(models.User, {
-            onUpdate: 'CASCADE',
-            onDelete: 'SET NULL'
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
         });
+        
+        Tool.belongsToMany(models.Tag, { through: 'ToolTag', foreignKey: 'TagId' });
     };
 
-    Tool.associate = function(models) {
-        Tool.belongsToMany(models.Tag, { through: 'ToolTag', foreignKey: 'ToolId' });
-    };
-
+    // Modify JSON output
     Tool.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
