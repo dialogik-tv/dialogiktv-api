@@ -139,9 +139,13 @@ module.exports = {
         } );
     },
     addTag: (req, res) => {
-        const toolId   = req.body.id;
-        const tagInput = req.body.tag;
+        const toolId = req.body.id;
         // const owner  = req.decoded.user.id;
+        const tagInput = req.body.tag.replace(/[^A-Za-z0-9\s]/g,'');
+        console.log(tagInput);
+        // Replace blank spaces by dashes: .replace(/ /g,"-")
+
+        throw new Error('STOP');
 
         db.Tool.findByPk(toolId)
             .then( (tool) => {
