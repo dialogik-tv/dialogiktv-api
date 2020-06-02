@@ -59,9 +59,7 @@ module.exports = {
         body.slug = body.slug + '-' + suffix;
 
         db.Tool.create(body)
-            .then( (result) => res.json({
-                "message": `Tool ${body.title} successfully created`
-            }) )
+            .then( (result) => res.json( { message: `Tool ${body.title} successfully created` } ) )
             .catch( (e) => {
                 const error = 'Database error, could not create';
                 console.log(error, e);
@@ -114,12 +112,12 @@ module.exports = {
             }
 
             const message = `Tool \`${slug}\` successfully updated`;
-            return res.json({ message: message });
+            return res.json( { message: message } );
         })
         .catch( (e) => {
             const error = `Error updating tool \`${slug}\``;
             console.log(error, e);
-            return res.status(500).json({ error: error });
+            return res.status(500).json( { error: error } );
         });
     },
     deleteTool: (req, res) => {
@@ -135,9 +133,9 @@ module.exports = {
         }).then( (result) => {
             if(result === 0) {
                 const error = 'There is no matching item, maybe you\'re not the owner of the item?';
-                return res.status(404).json({ error: error });
+                return res.status(404).json( { error: error } );
             }
-            return res.json({message:`Tool \`${slug}\` successfully deleted`});
+            return res.json( { message: `Tool \`${slug}\` successfully deleted` } );
         } );
     },
     addTag: (req, res) => {
@@ -153,11 +151,12 @@ module.exports = {
                     });
                 }
 
-                const error = 'Database error, could not add tag – please try again later';
-                db.Tag.create({name: tagInput})
+                const error = 'Database error, please try again later or contact tech support';
+                db.Tag.create( { name: tagInput } )
                     .then( (newTag) => {
+                        // Add tag to tool
                         tool.addTag(newTag);
-                        return res.json({message:`Tag \`${tagInput}\` successfully added to \`${tool.title}\``});
+                        return res.json( { message: `Tag \`${tagInput}\` successfully added to \`${tool.title}\`` } );
                     })
                     .catch( (e) => {
                         // Tag already exists, but let's create association
@@ -165,19 +164,22 @@ module.exports = {
                             db.Tag.findOne({where:{name:tagInput}})
                                 .then( (tag) => {
                                     try {
+                                        // Add tag to tool
+                                        // (sequelize automatically handles already existing
+                                        // associations via a pre processed SELECT query)
                                         tool.addTag(tag);
-                                        return res.json({message:`Tag \`${tagInput}\` successfully added to \`${tool.title}\``});
+                                        return res.json( { message: `Tag \`${tagInput}\` successfully added to \`${tool.title}\`` } );
                                     } catch (e) {
                                         console.log(error, e);
                                         return res.status(500).json({
-                                            "error": error
+                                            error: error
                                         });
                                     }
                                 });
                         } else {
                             console.log(error, e);
                             return res.status(500).json({
-                                "error": error
+                                error: error
                             });
                         }
                     });

@@ -10,25 +10,23 @@ module.exports = {
         body.status = 0;
 
         db.User.create(body)
-            .then( (result) => res.json({
-                "message": `User ${body.username} successfully created`
-            }) )
+            .then( (result) => res.json( { message: `User \`${body.username}\` successfully created` } ) )
             .catch( (e) => {
                 if(e.original.code == 'ER_DUP_ENTRY') {
                     return res.status(409).json({
-                        "error": 'Duplicate constraint violation',
-                        "message": e.original.sqlMessage
+                        error: 'Duplicate constraint violation',
+                        message: e.original.sqlMessage
                     })
                 } else {
                     return res.status(500).json({
-                        "error": 'Database error, please try again later'
+                        error: 'Database error, please try again later or contact tech support'
                     });
                 }
             });
     },
     login: (req, res) => {
         const body = req.body;
-        const invalidMessage = "Login failed";
+        const invalidMessage = 'Login failed';
         db.User.findOne({
             where: {
                 email: body.email,
@@ -54,15 +52,15 @@ module.exports = {
                         updatedAt: result.dataValues.updatedAt
                     };
                     const jsonToken = sign({ user: data }, process.env.JWT_SECRET, {
-                        expiresIn: "14d"
+                        expiresIn: '14d'
                     });
                     return res.json({
-                        message: "Login successful",
+                        message: 'Login successful',
                         token: jsonToken
                     });
                 } else {
                     return res.status(401).json({
-                        message: "Invalid email or password"
+                        message: invalidMessage
                     });
                 }
             }
