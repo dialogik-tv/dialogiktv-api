@@ -13,7 +13,7 @@ module.exports = {
                 },
             ],
             attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink'],
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             return res.json(result)
         } );
