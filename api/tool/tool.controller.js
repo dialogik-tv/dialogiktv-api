@@ -92,7 +92,7 @@ module.exports = {
         })
     },
     updateTool: (req, res) => {
-        const id  = req.params.id;
+        const id    = req.params.id;
         const body  = req.body;
         const owner = req.decoded.user.id;
 
@@ -107,27 +107,27 @@ module.exports = {
             result = result[0];
             if(result !== 1) {
                 return res.status(500).json({
-                    error: `Error updating \`${slug}\``
+                    error: `Error updating tool \`${id}\``
                 })
             }
 
-            const message = `Tool \`${slug}\` successfully updated`;
+            const message = `Tool \`${id}\` successfully updated`;
             return res.json( { message: message } );
         })
         .catch( (e) => {
-            const error = `Error updating tool \`${slug}\``;
+            const error = `Error updating tool \`${id}\``;
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
     },
     deleteTool: (req, res) => {
-        const slug  = req.params.slug;
+        const id    = req.params.id;
         const owner = req.decoded.user.id;
 
         // Delete User
         db.Tool.destroy({
             where: {
-                slug: slug,
+                id: id,
                 UserId: owner
             }
         }).then( (result) => {
@@ -135,17 +135,14 @@ module.exports = {
                 const error = 'There is no matching item, maybe you\'re not the owner of the item?';
                 return res.status(404).json( { error: error } );
             }
-            return res.json( { message: `Tool \`${slug}\` successfully deleted` } );
+            return res.json( { message: `Tool \`${id}\` successfully deleted` } );
         } );
     },
     addTag: (req, res) => {
         const toolId = req.body.id;
         // const owner  = req.decoded.user.id;
         const tagInput = req.body.tag.replace(/[^A-Za-z0-9\s]/g,'');
-        console.log(tagInput);
         // Replace blank spaces by dashes: .replace(/ /g,"-")
-
-        throw new Error('STOP');
 
         db.Tool.findByPk(toolId)
             .then( (tool) => {
@@ -165,7 +162,7 @@ module.exports = {
                     .catch( (e) => {
                         // Tag already exists, but let's create association
                         if(e.original.code == 'ER_DUP_ENTRY') {
-                            db.Tag.findOne({where:{name:tagInput}})
+                            db.Tag.findOne( { where: { name: tagInput } } )
                                 .then( (tag) => {
                                     try {
                                         // Add tag to tool
