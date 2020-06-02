@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             allowNull: false,
             type: DataTypes.INTEGER
+        },
+        isAdmin: {
+            allowNull: false,
+            defaultValue: false,
+            type: DataTypes.BOOLEAN
         }
     }, {
         scopes: {}

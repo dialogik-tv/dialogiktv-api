@@ -7,6 +7,7 @@ const app = express();
 const authRouter = require("./api/auth/auth.router");
 const userRouter = require("./api/user/user.router");
 const toolRouter = require("./api/tool/tool.router");
+const tagRouter  = require("./api/tag/tag.router");
 
 // Setup CORS
 app.use(cors());
@@ -21,6 +22,7 @@ let apiPrefix = '/api';
 app.use(apiPrefix, authRouter);
 app.use(apiPrefix, userRouter);
 app.use(apiPrefix, toolRouter);
+app.use(apiPrefix, tagRouter);
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';

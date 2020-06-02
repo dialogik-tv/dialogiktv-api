@@ -48,6 +48,7 @@ module.exports = {
                         lastname: result.dataValues.lastname,
                         email: result.dataValues.email,
                         status: result.dataValues.status,
+                        isAdmin: result.dataValues.isAdmin,
                         createdAt: result.dataValues.createdAt,
                         updatedAt: result.dataValues.updatedAt
                     };

@@ -95,6 +95,7 @@ module.exports = {
         const id    = req.params.id;
         const body  = req.body;
         const owner = req.decoded.user.id;
+        const error = `Error updating tool \`${id}\``;
 
         // Update user
         db.Tool.update(body, {
@@ -107,7 +108,7 @@ module.exports = {
             result = result[0];
             if(result !== 1) {
                 return res.status(500).json({
-                    error: `Error updating tool \`${id}\``
+                    error: error
                 })
             }
 
@@ -115,7 +116,6 @@ module.exports = {
             return res.json( { message: message } );
         })
         .catch( (e) => {
-            const error = `Error updating tool \`${id}\``;
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
@@ -137,53 +137,5 @@ module.exports = {
             }
             return res.json( { message: `Tool \`${id}\` successfully deleted` } );
         } );
-    },
-    addTag: (req, res) => {
-        const toolId = req.body.id;
-        // const owner  = req.decoded.user.id;
-        const tagInput = req.body.tag.replace(/[^A-Za-z0-9\s]/g,'');
-        // Replace blank spaces by dashes: .replace(/ /g,"-")
-
-        db.Tool.findByPk(toolId)
-            .then( (tool) => {
-                if(!tool) {
-                    return res.status(404).json({
-                        message: `No tool found with id ${toolId}`
-                    });
-                }
-
-                const error = 'Database error, please try again later or contact tech support';
-                db.Tag.create( { name: tagInput } )
-                    .then( (newTag) => {
-                        // Add tag to tool
-                        tool.addTag(newTag);
-                        return res.json( { message: `Tag \`${tagInput}\` successfully added to \`${tool.title}\`` } );
-                    })
-                    .catch( (e) => {
-                        // Tag already exists, but let's create association
-                        if(e.original.code == 'ER_DUP_ENTRY') {
-                            db.Tag.findOne( { where: { name: tagInput } } )
-                                .then( (tag) => {
-                                    try {
-                                        // Add tag to tool
-                                        // (sequelize automatically handles already existing
-                                        // associations via a pre processed SELECT query)
-                                        tool.addTag(tag);
-                                        return res.json( { message: `Tag \`${tagInput}\` successfully added to \`${tool.title}\`` } );
-                                    } catch (e) {
-                                        console.log(error, e);
-                                        return res.status(500).json({
-                                            error: error
-                                        });
-                                    }
-                                });
-                        } else {
-                            console.log(error, e);
-                            return res.status(500).json({
-                                error: error
-                            });
-                        }
-                    });
-            });
-    },
+    }
 };
