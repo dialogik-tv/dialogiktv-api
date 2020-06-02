@@ -15,8 +15,8 @@ router.post("/tool/create", checkToken, createTool);
 router.get("/tools/tag/:tag", getToolsByTag);
 router.get("/tools", getTools);
 router.get("/tool/:slug", getToolBySlug);
-router.patch("/tool/edit/:slug", checkToken, updateTool);
-router.delete("/tool/delete/:slug", checkToken, deleteTool);
+router.patch("/tool/edit/:id", checkToken, updateTool);
+router.delete("/tool/delete/:id", checkToken, deleteTool);
 
 // Tag routes
 router.post("/tool/tag", checkToken, addTag);
