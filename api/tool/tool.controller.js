@@ -11,9 +11,14 @@ module.exports = {
                     attributes: ['name'],
                     through: { attributes: [] }
                 },
+                {
+                    model: db.Tutorial,
+                    attributes: ['id', 'title'],
+                    through: { attributes: [] }
+                }
             ],
-            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink'],
-            order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
+            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'createdAt', 'updatedAt'],
+            order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result)
         } );
@@ -27,6 +32,7 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
+                    attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'createdAt', 'updatedAt'],
                     include: [
                         {
                             model: db.User,
@@ -36,11 +42,17 @@ module.exports = {
                             model: db.Tag,
                             attributes: ['name'],
                             through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title'],
+                            through: { attributes: [] }
                         }
                     ],
                     through: { attributes: [] }
                 },
             ],
+            order: [['createdAt', 'DESC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
         }).then( (result) => {
             return res.json(result);
         } );
@@ -53,7 +65,7 @@ module.exports = {
         while (suffix.length < 12) {
             suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '');
         }
-        
+
         body.UserId = owner;
         body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
         body.slug = body.slug + '-' + suffix;
