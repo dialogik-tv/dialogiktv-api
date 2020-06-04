@@ -4,17 +4,27 @@ const db = require ("../../models");
 module.exports = {
     getTags: (req, res) => {
         db.Tag.findAll({
-            // include: [
-                // { model: db.User, attributes: ['username']},
-                // {
-                //     model: db.Tag,
-                //     attributes: ['name'],
-                //     through: { attributes: [] }
-                // },
-            // ],
-            // attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink'],
+            include: [
+                {
+                    model: db.Tool,
+                    attributes: ['id', 'title', 'description', 'slug'],
+                    through: { attributes: [] }
+                },
+            ],
+            attributes: ['id', 'name', 'description', 'createdAt', 'updatedAt'],
             // order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
+            result.sort(function compare(a, b) {
+                if(a.Tools.length < b.Tools.length) {
+                    return 1;
+                }
+                if(a.Tools.length > b.Tools.length) {
+                    return -1;
+                }
+                // a muss gleich b sein
+                return 0;
+            });
+
             return res.json(result)
         } );
     },
