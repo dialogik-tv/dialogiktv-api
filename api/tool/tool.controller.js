@@ -17,7 +17,7 @@ module.exports = {
                     through: { attributes: [] }
                 }
             ],
-            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views'],
             order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result)
@@ -32,7 +32,7 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'createdAt', 'updatedAt'],
+                    attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views'],
                     include: [
                         {
                             model: db.User,
@@ -85,6 +85,7 @@ module.exports = {
     },
     getToolBySlug: (req, res) => {
         const slug = req.params.slug;
+        const error = 'Database error, could not create';
         db.Tool.findOne({
             where: {
                 slug: slug
@@ -96,15 +97,34 @@ module.exports = {
                     attributes: ['name'],
                     through: { attributes: [] }
                 },
-            ]
+                {
+                    model: db.Tutorial,
+                    attributes: ['id', 'title'],
+                    through: { attributes: [] }
+                }
+            ],
+            order: [[db.Tag, 'name', 'ASC'], [db.Tutorial, 'createdAt', 'DESC']]
         }).then( (result) => {
             if(!result) {
                 return res.status(404).json({
                     message: `No tool found with slug ${slug}`
                 })
             }
-            return res.json(result);
-        })
+
+            // Increase view counter
+            db.Tool.update(
+                { views: (result.views + 1) },
+                { where: { id: result.id } }
+            )
+            .then( (updateResult) => res.json(result) )
+            .catch( (e) => {
+                console.log(error, e);
+                return res.status(500).json( { error: error } );
+            });
+        }).catch( (e) => {
+            console.log(error, e);
+            return res.status(500).json( { error: error } );
+        });
     },
     updateTool: (req, res) => {
         const id    = req.params.id;

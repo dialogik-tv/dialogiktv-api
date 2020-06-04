@@ -7,7 +7,7 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'description', 'slug'],
+                    attributes: ['id', 'title', 'description', 'slug', 'views'],
                     through: { attributes: [] }
                 },
             ],
