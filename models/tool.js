@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         description: DataTypes.TEXT,
         link: DataTypes.STRING,
+        docLink: DataTypes.STRING,
         vendor: DataTypes.STRING,
         vendorLink: DataTypes.STRING,
         views: DataTypes.INTEGER
