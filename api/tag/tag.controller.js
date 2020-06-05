@@ -21,7 +21,6 @@ module.exports = {
                 if(a.Tools.length > b.Tools.length) {
                     return -1;
                 }
-                // a muss gleich b sein
                 return 0;
             });
 
