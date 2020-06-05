@@ -1,6 +1,6 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        // Tool belongsToMany Tutorial (and vice versa)
+        // Tool belongsToMany Collection (and vice versa)
         return queryInterface.createTable(
             'ToolCollection',
             {
