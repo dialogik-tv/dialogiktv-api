@@ -36,6 +36,9 @@ module.exports = (sequelize, DataTypes) => {
         // Tool n:m Tag
         Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
 
+        // Tool n:m Collection
+        Tool.belongsToMany(models.Collection, { through: 'ToolCollection' });
+
         // Tool n:m Tutorial
         Tool.belongsToMany(models.Tutorial, { through: 'ToolTutorial' });
     };
