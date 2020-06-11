@@ -11,10 +11,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         title: {
             allowNull: false,
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            validate: {
+                notEmpty: true,
+                len: [8, 40]
+            }
         },
         description: DataTypes.TEXT,
-        link: DataTypes.STRING
+        link: {
+            type: DataTypes.STRING,
+            validate: {
+                isUrl: true
+            }
+        },
     }, {});
 
     // Associations

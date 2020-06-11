@@ -76,6 +76,13 @@ module.exports = {
                 slug: body.slug
             } ) )
             .catch( (e) => {
+                // Validation errors
+                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                    return res.status(500).json({
+                        error: 'Form invalid'
+                    });
+                }
+
                 const error = 'Database error, could not create';
                 console.log(error, e);
                 return res.status(500).json({
@@ -151,6 +158,13 @@ module.exports = {
             return res.json( { message: message } );
         })
         .catch( (e) => {
+            // Validation errors
+            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                return res.status(500).json({
+                    error: 'Form invalid'
+                });
+            }
+            
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });

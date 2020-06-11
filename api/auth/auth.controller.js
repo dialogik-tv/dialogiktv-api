@@ -12,16 +12,15 @@ module.exports = {
         db.User.create(body)
             .then( (result) => res.json( { message: `User \`${body.username}\` successfully created` } ) )
             .catch( (e) => {
-                if(e.original.code == 'ER_DUP_ENTRY') {
-                    return res.status(409).json({
-                        error: 'Duplicate constraint violation',
-                        message: e.original.sqlMessage
-                    })
-                } else {
+                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
                     return res.status(500).json({
-                        error: 'Database error, please try again later or contact tech support'
+                        error: 'Form invalid'
                     });
                 }
+
+                return res.status(500).json({
+                    error: 'Database error, please try again later or contact tech support'
+                });
             });
     },
     login: (req, res) => {

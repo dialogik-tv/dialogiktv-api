@@ -75,6 +75,12 @@ module.exports = {
             return res.json( { message: message } );
         })
         .catch( (e) => {
+            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                return res.status(500).json({
+                    error: 'Form invalid'
+                });
+            }
+
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
@@ -121,8 +127,15 @@ module.exports = {
                         return res.json( { message: `Tag \`${tagInput}\` successfully added to \`${tool.title}\`` } );
                     })
                     .catch( (e) => {
+                        // Validation errors
+                        if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                            return res.status(500).json({
+                                error: 'Form invalid'
+                            });
+                        }
+
                         // Tag already exists, but let's create association
-                        if(e.original.code == 'ER_DUP_ENTRY') {
+                        if(typeof e.original !== 'undefined' && e.original.code !== 'undefined' && e.original.code == 'ER_DUP_ENTRY') {
                             db.Tag.findOne( { where: { name: tagInput } } )
                                 .then( (tag) => {
                                     try {

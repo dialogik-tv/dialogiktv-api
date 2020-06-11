@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         title: {
             allowNull: false,
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            validate: {
+                notEmpty: true,
+                len: [3, 40]
+            }
         },
         slug: {
             allowNull: false,
@@ -19,10 +23,31 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         },
         description: DataTypes.TEXT,
-        link: DataTypes.STRING,
-        docLink: DataTypes.STRING,
-        vendor: DataTypes.STRING,
-        vendorLink: DataTypes.STRING,
+        link: {
+            type: DataTypes.STRING,
+            validate: {
+                isUrl: true
+            }
+        },
+        docLink: {
+            type: DataTypes.STRING,
+            validate: {
+                isUrl: true
+            }
+        },
+        vendor: {
+            type: DataTypes.STRING,
+            validate: {
+                notEmpty: true,
+                len: [2, 40]
+            }
+        },
+        vendorLink: {
+            type: DataTypes.STRING,
+            validate: {
+                isUrl: true
+            }
+        },
         views: DataTypes.INTEGER
     }, {});
 

@@ -53,6 +53,13 @@ module.exports = {
             return res.json( { message: message } );
         })
         .catch( (e) => {
+            // Validation errors
+            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                return res.status(500).json({
+                    error: 'Form invalid'
+                });
+            }
+
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
@@ -102,6 +109,13 @@ module.exports = {
                         return res.json( { message: `Tutorial \`${tutorialInput.title}\` successfully added to \`${tool.title}\`` } );
                     })
                     .catch( (e) => {
+                        // Validation errors
+                        if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                            return res.status(500).json({
+                                error: 'Form invalid'
+                            });
+                        }
+
                         console.log(error, e);
                         return res.status(500).json({
                             error: error

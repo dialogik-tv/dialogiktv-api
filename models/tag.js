@@ -12,7 +12,12 @@ module.exports = (sequelize, DataTypes) => {
         name: {
             allowNull: false,
             type: DataTypes.STRING,
-            unique: true
+            unique: true,
+            validate: {
+                isAlphanumeric: true,
+                notEmpty: true,
+                len: [3, 20]
+            }
         },
         description: DataTypes.TEXT
     }, {});
