@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             unique: true
         },
-        description: DataTypes.STRING
+        description: DataTypes.TEXT
     }, {});
 
     // Associations
