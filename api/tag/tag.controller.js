@@ -85,7 +85,7 @@ module.exports = {
         const isAdmin = req.decoded.user.isAdmin;
 
         if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to update tag ${id}`);
+            console.log(`Unauthorized access attempt by ${owner} to delete tag ${id}`);
             return res.status(401).json( { error: error } );
         }
 

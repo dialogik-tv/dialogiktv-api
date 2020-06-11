@@ -63,7 +63,7 @@ module.exports = {
         const isAdmin = req.decoded.user.isAdmin;
 
         if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to update tutorial ${id}`);
+            console.log(`Unauthorized access attempt by ${owner} to delete tutorial ${id}`);
             return res.status(401).json( { error: error } );
         }
 
