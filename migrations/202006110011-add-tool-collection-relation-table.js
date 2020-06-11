@@ -1,8 +1,8 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        // Tool belongsToMany Tag (and vice versa)
+        // Tool belongsToMany Collection (and vice versa)
         return queryInterface.createTable(
-            'ToolTag',
+            'ToolCollection',
             {
                 createdAt: {
                     allowNull: false,
@@ -15,10 +15,18 @@ module.exports = {
                 ToolId: {
                     type: Sequelize.UUID,
                     primaryKey: true,
+                    references: {
+                        model: 'Tool',
+                        key: 'id',
+                    },
                 },
-                TagId: {
+                CollectionId: {
                     type: Sequelize.UUID,
                     primaryKey: true,
+                    references: {
+                        model: 'Collection',
+                        key: 'id',
+                    },
                 },
             }
         );
@@ -26,6 +34,6 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         // Remove table
-        return queryInterface.dropTable('ToolTag');
+        return queryInterface.dropTable('ToolCollection');
     },
 };

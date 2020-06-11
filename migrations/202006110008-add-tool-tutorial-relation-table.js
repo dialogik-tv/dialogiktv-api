@@ -15,10 +15,18 @@ module.exports = {
                 ToolId: {
                     type: Sequelize.UUID,
                     primaryKey: true,
+                    references: {
+                        model: 'Tool',
+                        key: 'id'
+                    },
                 },
                 TutorialId: {
                     type: Sequelize.UUID,
                     primaryKey: true,
+                    references: {
+                        model: 'Tutorial',
+                        key: 'id'
+                    },
                 },
             }
         );
