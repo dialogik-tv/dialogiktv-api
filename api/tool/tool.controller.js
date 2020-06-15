@@ -23,40 +23,6 @@ module.exports = {
             return res.json(result)
         } );
     },
-    getToolsByTag: (req, res) => {
-        const tag = req.params.tag;
-        db.Tag.findOne({
-            where: {
-                name: tag
-            },
-            include: [
-                {
-                    model: db.Tool,
-                    attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views'],
-                    include: [
-                        {
-                            model: db.User,
-                            attributes: ['username']
-                        },
-                        {
-                            model: db.Tag,
-                            attributes: ['name'],
-                            through: { attributes: [] }
-                        },
-                        {
-                            model: db.Tutorial,
-                            attributes: ['id', 'title'],
-                            through: { attributes: [] }
-                        }
-                    ],
-                    through: { attributes: [] }
-                },
-            ],
-            order: [['createdAt', 'DESC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
-        }).then( (result) => {
-            return res.json(result);
-        } );
-    },
     createTool: (req, res) => {
         const body  = req.body;
         const owner = req.decoded.user.id;
@@ -164,7 +130,7 @@ module.exports = {
                     error: 'Form invalid'
                 });
             }
-            
+
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });

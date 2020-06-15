@@ -7,11 +7,11 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'description', 'slug', 'views'],
+                    attributes: ['id', 'title', 'slug', 'views'],
                     through: { attributes: [] }
                 },
             ],
-            attributes: ['id', 'name', 'description', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'name', 'description'],
             // order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             result.sort(function compare(a, b) {
@@ -33,23 +33,31 @@ module.exports = {
             where: {
                 name: tag
             },
-            // include: [
-            //     {
-            //         model: db.Tool,
-            //         include: [
-            //             {
-            //                 model: db.User,
-            //                 attributes: ['username']
-            //             },
-            //             {
-            //                 model: db.Tag,
-            //                 attributes: ['name'],
-            //                 through: { attributes: [] }
-            //             }
-            //         ],
-            //         through: { attributes: [] }
-            //     },
-            // ],
+            include: [
+                {
+                    model: db.Tool,
+                    attributes: ['id', 'title', 'slug', 'views'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title'],
+                            through: { attributes: [] }
+                        }
+                    ],
+                    through: { attributes: [] }
+                },
+            ],
+            attributes: ['id', 'name', 'description'],
+            order: [['createdAt', 'DESC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
         }).then( (result) => {
             return res.json(result);
         } );
