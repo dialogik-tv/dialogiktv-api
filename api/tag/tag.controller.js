@@ -11,7 +11,7 @@ module.exports = {
                     through: { attributes: [] }
                 },
             ],
-            attributes: ['id', 'name', 'description'],
+            attributes: ['id', 'name', 'description', 'createdAt'],
             // order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             result.sort(function compare(a, b) {

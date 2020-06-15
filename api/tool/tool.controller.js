@@ -17,7 +17,7 @@ module.exports = {
                     through: { attributes: [] }
                 }
             ],
-            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views'],
+            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views', 'createdAt'],
             order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result)
