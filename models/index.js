@@ -19,7 +19,8 @@ let options = {
 
         // Soft deletion only! (add deletedAt timestamp)
         paranoid: true
-    }
+    },
+    // logging: false
 }
 
 // Initialize connection
