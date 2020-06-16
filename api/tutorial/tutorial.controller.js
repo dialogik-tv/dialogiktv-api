@@ -42,7 +42,7 @@ module.exports = {
                     through: { attributes: [] }
                 }
             ],
-            order: [[db.Tool, 'name', 'ASC']]
+            order: [[db.Tool, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result);
         } );
