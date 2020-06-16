@@ -23,13 +23,14 @@ module.exports = {
             return res.json(result)
         } );
     },
-    getToolBySlug: (req, res) => {
+    getToolByIdOrSlug: (req, res) => {
         const slug = req.params.slug;
-        const error = 'Database error, could not create';
+        const error = 'Database error, could not get tool';
         db.Tool.findOne({
-            where: {
-                slug: slug
-            },
+            where: db.Sequelize.or(
+                { id: slug },
+                { slug: slug }
+            ),
             include: [
                 { model: db.User, attributes: ['username']},
                 {
