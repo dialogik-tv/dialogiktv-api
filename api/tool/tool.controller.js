@@ -3,7 +3,7 @@ const db = require ("../../models");
 
 module.exports = {
     getTools: (req, res) => {
-        db.Tool.findAll({
+        db.Tool.scope('published').findAll({
             include: [
                 { model: db.User, attributes: ['username']},
                 {

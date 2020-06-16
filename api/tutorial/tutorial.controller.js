@@ -3,7 +3,7 @@ const db = require ("../../models");
 
 module.exports = {
     getTutorials: (req, res) => {
-        db.Tutorial.findAll({
+        db.Tutorial.scope('published').findAll({
             include: [
                 { model: db.User, attributes: ['username']},
                 {

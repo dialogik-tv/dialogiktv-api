@@ -51,9 +51,11 @@ module.exports = (sequelize, DataTypes) => {
         views: DataTypes.INTEGER,
         status: DataTypes.INTEGER
     }, {
-        defaultScope: {
-            where: {
-                status: 50
+        scopes: {
+            published: {
+                where: {
+                    status: 50
+                }
             }
         },
     });
@@ -78,9 +80,17 @@ module.exports = (sequelize, DataTypes) => {
 
     // Modify JSON output
     Tool.prototype.toJSON = function () {
+        const status = {
+            '0': 'submitted',
+            '20': 'reviewing',
+            '50': 'published',
+            '-10': 'flagged',
+            '-50': 'rejected',
+        };
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
         delete values.UserId;
+        values.status = status[values.status];
         return values;
     }
 
