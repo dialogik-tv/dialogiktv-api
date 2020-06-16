@@ -128,7 +128,7 @@ module.exports = {
                     })
                     .catch( (e) => {
                         // Validation errors
-                        if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                        if(typeof e.errors !== 'undefined' && typeof e.name !== 'undefined' && e.name == 'SequelizeValidationError') {
                             return res.status(500).json({
                                 error: 'Form invalid'
                             });
