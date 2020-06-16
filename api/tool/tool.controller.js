@@ -89,7 +89,8 @@ module.exports = {
                 // Validation errors
                 if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
                     return res.status(500).json({
-                        error: 'Form invalid'
+                        status: 'Form invalid',
+                        errors: e.errors
                     });
                 }
 

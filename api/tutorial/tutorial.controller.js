@@ -77,13 +77,17 @@ module.exports = {
                     .then( (newTutorial) => {
                         // Add tag to tool
                         tool.addTutorial(newTutorial);
-                        return res.json( { message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\`` } );
+                        return res.json( {
+                            message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\``,
+                            id: newTutorial.id
+                        } );
                     })
                     .catch( (e) => {
                         // Validation errors
                         if(typeof e.errors !== 'undefined' && typeof e.name !== 'undefined' && e.name == 'SequelizeValidationError') {
                             return res.status(500).json({
-                                error: 'Form invalid'
+                                status: 'Form invalid',
+                                errors: e.errors
                             });
                         }
 

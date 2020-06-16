@@ -90,7 +90,10 @@ module.exports = (sequelize, DataTypes) => {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
         delete values.UserId;
-        values.status = status[values.status];
+        values.status = {
+            code: values.status,
+            name: status[values.status]
+        };
         return values;
     }
 
