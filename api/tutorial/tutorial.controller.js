@@ -109,7 +109,7 @@ module.exports = {
         delete req.body.tool;
 
         // Add owner ID to payload
-        body.UserId = owner;
+        req.body.UserId = owner;
 
         db.Tool.findByPk(toolId)
             .then( (tool) => {
