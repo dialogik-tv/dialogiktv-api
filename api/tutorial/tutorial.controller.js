@@ -44,8 +44,55 @@ module.exports = {
             ],
             order: [[db.Tool, 'title', 'ASC']]
         }).then( (result) => {
-            return res.json(result);
+            db.Tutorial.update(
+                { views: (result.views + 1) },
+                { where: { id: result.id } }
+            )
+            .then( (updateResult) => res.json(result) )
+            .catch( (e) => {
+                console.log(error, e);
+                return res.json(result);
+            });
         } );
+    },
+    addToolTutorial: (req, res) => {
+        // Extract tool ID and remove from payload
+        const toolId = req.body.tool;
+        delete req.body.tool;
+
+        // Add owner ID to payload
+        req.body.UserId = req.decoded.user.id;
+
+        // Find according tool
+        db.Tool.findByPk(toolId)
+            .then( (tool) => {
+                if(!tool) {
+                    return res.status(404).json({
+                        message: `No tool found with id ${toolId}`
+                    });
+                }
+
+                const error = 'Database error, please try again later or contact tech support';
+                db.Tutorial.create(req.body)
+                    .then( (newTutorial) => {
+                        // Add tag to tool
+                        tool.addTutorial(newTutorial);
+                        return res.json( { message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\`` } );
+                    })
+                    .catch( (e) => {
+                        // Validation errors
+                        if(typeof e.errors !== 'undefined' && typeof e.name !== 'undefined' && e.name == 'SequelizeValidationError') {
+                            return res.status(500).json({
+                                error: 'Form invalid'
+                            });
+                        }
+
+                        console.log(error, e);
+                        return res.status(500).json({
+                            error: error
+                        });
+                    });
+            });
     },
     updateTutorial: (req, res) => {
         const id      = req.params.id;
@@ -100,45 +147,5 @@ module.exports = {
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
-    },
-    addToolTutorial: (req, res) => {
-        const toolId = req.body.tool;
-        const owner  = req.decoded.user.id;
-
-        // Remove tool ID from payload
-        delete req.body.tool;
-
-        // Add owner ID to payload
-        req.body.UserId = owner;
-
-        db.Tool.findByPk(toolId)
-            .then( (tool) => {
-                if(!tool) {
-                    return res.status(404).json({
-                        message: `No tool found with id ${toolId}`
-                    });
-                }
-
-                const error = 'Database error, please try again later or contact tech support';
-                db.Tutorial.create(req.body)
-                    .then( (newTutorial) => {
-                        // Add tag to tool
-                        tool.addTutorial(newTutorial);
-                        return res.json( { message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\`` } );
-                    })
-                    .catch( (e) => {
-                        // Validation errors
-                        if(typeof e.errors !== 'undefined' && typeof e.name !== 'undefined' && e.name == 'SequelizeValidationError') {
-                            return res.status(500).json({
-                                error: 'Form invalid'
-                            });
-                        }
-
-                        console.log(error, e);
-                        return res.status(500).json({
-                            error: error
-                        });
-                    });
-            });
     },
 };

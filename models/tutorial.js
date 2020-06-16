@@ -24,7 +24,15 @@ module.exports = (sequelize, DataTypes) => {
                 isUrl: true
             }
         },
-    }, {});
+        views: DataTypes.INTEGER,
+        status: DataTypes.INTEGER
+    }, {
+        defaultScope: {
+            where: {
+                status: 50
+            }
+        },
+    });
 
     // Associations
     Tutorial.associate = function(models) {

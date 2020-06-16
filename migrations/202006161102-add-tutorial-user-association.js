@@ -1,3 +1,4 @@
+'use strict';
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.addColumn(
@@ -17,8 +18,8 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         return queryInterface.removeColumn(
-            'Tutorial', // Name of Source model
-            'UserId' // Key we want to remove
+            'Tutorial',
+            'UserId'
         );
     }
 };

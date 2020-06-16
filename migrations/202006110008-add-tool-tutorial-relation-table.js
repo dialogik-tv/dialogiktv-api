@@ -1,3 +1,4 @@
+'use strict';
 module.exports = {
     up: (queryInterface, Sequelize) => {
         // Tool belongsToMany Tutorial (and vice versa)

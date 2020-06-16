@@ -1,5 +1,6 @@
+'use strict';
 module.exports = {
-    up: function(queryInterface, Sequelize) {
+    up: (queryInterface, Sequelize) => {
         return queryInterface.addColumn(
             'Tool',
             'docLink',
@@ -9,7 +10,7 @@ module.exports = {
         );
     },
 
-    down: function(queryInterface, Sequelize) {
+    down: (queryInterface, Sequelize) => {
         return queryInterface.removeColumn(
             'Tool',
             'docLink'

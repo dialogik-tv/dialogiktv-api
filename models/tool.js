@@ -48,8 +48,15 @@ module.exports = (sequelize, DataTypes) => {
                 isUrl: true
             }
         },
-        views: DataTypes.INTEGER
-    }, {});
+        views: DataTypes.INTEGER,
+        status: DataTypes.INTEGER
+    }, {
+        defaultScope: {
+            where: {
+                status: 50
+            }
+        },
+    });
 
     // Associations
     Tool.associate = function(models) {

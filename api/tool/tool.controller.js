@@ -60,7 +60,7 @@ module.exports = {
             .then( (updateResult) => res.json(result) )
             .catch( (e) => {
                 console.log(error, e);
-                return res.status(500).json( { error: error } );
+                return res.json(result);
             });
         }).catch( (e) => {
             console.log(error, e);
