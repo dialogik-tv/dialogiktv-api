@@ -1,5 +1,19 @@
 'use strict';
 module.exports = {
+
+    /* ********************************
+    // TODO: How to automatically use model definition
+    // let models = require('../Models/index');
+    //
+    // module.exports = {
+    //  up: function (queryInterface, Sequelize) {
+    //    return Promise.resolve()
+    //      .then(() => {
+    //        return queryInterface.createTable(models.projects.tableName,
+    //          models.projects.attributes, models.projects.options);
+    //      });
+    ******************************** */
+
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('User', {
             id: {
