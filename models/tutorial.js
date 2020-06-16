@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
 
     // Associations
     Tutorial.associate = function(models) {
+        // Tutorial n:1 User
+        Tutorial.belongsTo(models.User, {
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
+        });
+
         Tutorial.belongsToMany(models.Tool, { through: 'ToolTutorial' });
     };
 
@@ -35,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     Tutorial.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
+        delete values.UserId;
         return values;
     }
 

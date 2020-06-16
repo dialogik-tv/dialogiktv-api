@@ -23,39 +23,6 @@ module.exports = {
             return res.json(result)
         } );
     },
-    createTool: (req, res) => {
-        const body  = req.body;
-        const owner = req.decoded.user.id;
-
-        let suffix = ''
-        while (suffix.length < 12) {
-            suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '');
-        }
-
-        body.UserId = owner;
-        body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
-        body.slug = body.slug + '-' + suffix;
-
-        db.Tool.create(body)
-            .then( (result) => res.json( {
-                message: `Tool ${body.title} successfully created`,
-                slug: body.slug
-            } ) )
-            .catch( (e) => {
-                // Validation errors
-                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
-                    return res.status(500).json({
-                        error: 'Form invalid'
-                    });
-                }
-
-                const error = 'Database error, could not create';
-                console.log(error, e);
-                return res.status(500).json({
-                    "error": error
-                })
-            });
-    },
     getToolBySlug: (req, res) => {
         const slug = req.params.slug;
         const error = 'Database error, could not create';
@@ -98,6 +65,39 @@ module.exports = {
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
+    },
+    createTool: (req, res) => {
+        const body  = req.body;
+        const owner = req.decoded.user.id;
+
+        let suffix = ''
+        while (suffix.length < 12) {
+            suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '');
+        }
+
+        body.UserId = owner;
+        body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
+        body.slug = body.slug + '-' + suffix;
+
+        db.Tool.create(body)
+            .then( (result) => res.json( {
+                message: `Tool ${body.title} successfully created`,
+                slug: body.slug
+            } ) )
+            .catch( (e) => {
+                // Validation errors
+                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                    return res.status(500).json({
+                        error: 'Form invalid'
+                    });
+                }
+
+                const error = 'Database error, could not create';
+                console.log(error, e);
+                return res.status(500).json({
+                    "error": error
+                })
+            });
     },
     updateTool: (req, res) => {
         const id    = req.params.id;

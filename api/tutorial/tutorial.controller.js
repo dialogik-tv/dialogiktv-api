@@ -5,6 +5,7 @@ module.exports = {
     getTutorials: (req, res) => {
         db.Tutorial.findAll({
             include: [
+                { model: db.User, attributes: ['username']},
                 {
                     model: db.Tool,
                     attributes: ['id', 'title', 'slug'],
@@ -28,7 +29,21 @@ module.exports = {
     },
     getTutorial: (req, res) => {
         const id = req.params.id;
-        db.Tutorial.findByPk(id).then( (result) => {
+
+        db.Tutorial.findOne({
+            where: {
+                id: id
+            },
+            include: [
+                { model: db.User, attributes: ['username']},
+                {
+                    model: db.Tool,
+                    attributes: ['id', 'slug', 'title'],
+                    through: { attributes: [] }
+                }
+            ],
+            order: [[db.Tool, 'name', 'ASC']]
+        }).then( (result) => {
             return res.json(result);
         } );
     },
@@ -88,10 +103,13 @@ module.exports = {
     },
     addToolTutorial: (req, res) => {
         const toolId = req.body.tool;
+        const owner  = req.decoded.user.id;
 
+        // Remove tool ID from payload
         delete req.body.tool;
-        const tutorialInput = req.body;
-        console.log(tutorialInput);
+
+        // Add owner ID to payload
+        body.UserId = owner;
 
         db.Tool.findByPk(toolId)
             .then( (tool) => {
@@ -102,11 +120,11 @@ module.exports = {
                 }
 
                 const error = 'Database error, please try again later or contact tech support';
-                db.Tutorial.create(tutorialInput)
+                db.Tutorial.create(req.body)
                     .then( (newTutorial) => {
                         // Add tag to tool
                         tool.addTutorial(newTutorial);
-                        return res.json( { message: `Tutorial \`${tutorialInput.title}\` successfully added to \`${tool.title}\`` } );
+                        return res.json( { message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\`` } );
                     })
                     .catch( (e) => {
                         // Validation errors
