@@ -59,9 +59,10 @@ module.exports = (sequelize, DataTypes) => {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
         delete values.UserId;
+        const old = values.status;
         values.status = {
-            code: values.status,
-            name: status[values.status]
+            code: old,
+            name: status[old]
         };
         return values;
     }

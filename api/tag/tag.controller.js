@@ -7,7 +7,7 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'slug', 'views'],
+                    attributes: ['id', 'title', 'slug', 'status', 'views'],
                     through: { attributes: [] }
                 },
             ],
@@ -36,7 +36,7 @@ module.exports = {
             include: [
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'slug', 'views'],
+                    attributes: ['id', 'title', 'slug', 'status', 'views'],
                     include: [
                         {
                             model: db.User,
@@ -49,7 +49,7 @@ module.exports = {
                         },
                         {
                             model: db.Tutorial,
-                            attributes: ['id', 'title'],
+                            attributes: ['id', 'title', 'status', 'views'],
                             through: { attributes: [] }
                         }
                     ],

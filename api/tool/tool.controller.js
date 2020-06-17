@@ -13,11 +13,11 @@ module.exports = {
                 },
                 {
                     model: db.Tutorial,
-                    attributes: ['id', 'title'],
+                    attributes: ['id', 'title', 'status', 'views'],
                     through: { attributes: [] }
                 }
             ],
-            attributes: ['id', 'title', 'description', 'slug', 'vendor', 'vendorLink', 'views', 'createdAt'],
+            attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
             order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result)
@@ -40,7 +40,7 @@ module.exports = {
                 },
                 {
                     model: db.Tutorial,
-                    attributes: ['id', 'title'],
+                    attributes: ['id', 'title', 'status', 'views'],
                     through: { attributes: [] }
                 }
             ],

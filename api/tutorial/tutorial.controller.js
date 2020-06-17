@@ -8,7 +8,7 @@ module.exports = {
                 { model: db.User, attributes: ['username']},
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'slug'],
+                    attributes: ['id', 'title', 'slug', 'status', 'views'],
                     through: { attributes: [] }
                 },
             ],
@@ -38,7 +38,7 @@ module.exports = {
                 { model: db.User, attributes: ['username']},
                 {
                     model: db.Tool,
-                    attributes: ['id', 'slug', 'title'],
+                    attributes: ['id', 'title', 'slug', 'status', 'views'],
                     through: { attributes: [] }
                 }
             ],
