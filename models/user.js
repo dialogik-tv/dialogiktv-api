@@ -61,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
     User.associate = function(models) {
         User.hasMany(models.Tool);
         User.hasMany(models.Tutorial);
+        User.hasMany(models.Collection);
     };
 
     // Modify JSON output

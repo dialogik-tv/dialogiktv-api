@@ -79,12 +79,13 @@ module.exports = {
         })
         .catch( (e) => {
             // Validation errors
-            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+            if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
-                    error: 'Form invalid'
+                    status: 'Form invalid',
+                    errors: e.errors
                 });
             }
-            
+
             let error = `Error updating user ${username}`;
             console.log(error, e);
             return res.status(500).json( {error:error} );

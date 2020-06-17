@@ -2,8 +2,8 @@ const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
 
 module.exports = {
-    getTutorials: (req, res) => {
-        db.Tutorial.scope('published').findAll({
+    getCollections: (req, res) => {
+        db.Collection.findAll({
             include: [
                 { model: db.User, attributes: ['username']},
                 {
@@ -12,25 +12,16 @@ module.exports = {
                     through: { attributes: [] }
                 },
             ],
-            order: [['createdAt', 'DESC'], [db.Tool, 'title', 'ASC']]
+            attributes: ['id', 'title', 'description', 'views', 'createdAt'],
+            order: [['views', 'DESC'], [db.Tool, 'title', 'ASC']]
         }).then( (result) => {
-            result.sort(function compare(a, b) {
-                if(a.Tools.length < b.Tools.length) {
-                    return 1;
-                }
-                if(a.Tools.length > b.Tools.length) {
-                    return -1;
-                }
-                return 0;
-            });
-
             return res.json(result)
         } );
     },
-    getTutorial: (req, res) => {
+    getCollection: (req, res) => {
         const id = req.params.id;
 
-        db.Tutorial.findOne({
+        db.Collection.findOne({
             where: {
                 id: id
             },
@@ -45,7 +36,7 @@ module.exports = {
             order: [[db.Tool, 'title', 'ASC']]
         }).then( (result) => {
             // Increase view counter
-            db.Tutorial.update(
+            db.Collection.update(
                 { views: (result.views + 1) },
                 { where: { id: result.id } }
             )
@@ -57,50 +48,71 @@ module.exports = {
             });
         } );
     },
-    addToolTutorial: (req, res) => {
-        // Extract tool ID and remove from payload
-        const toolId = req.body.tool;
-        delete req.body.tool;
-
+    createCollection: (req, res) => {
         // Add owner ID to payload
         req.body.UserId = req.decoded.user.id;
 
-        // Find according tool
-        db.Tool.findByPk(toolId)
-            .then( (tool) => {
-                if(!tool) {
-                    return res.status(404).json({
-                        message: `No tool found with id ${toolId}`
+        const error = 'Database error, please try again later or contact tech support';
+        db.Collection.create(req.body)
+            .then( (collection) => {
+                return res.json( {
+                    message: `Collection \`${req.body.title}\` successfully created`,
+                    id: collection.id
+                } );
+            })
+            .catch( (e) => {
+                // Validation errors
+                if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
+                    return res.status(500).json({
+                        status: 'Form invalid',
+                        errors: e.errors
                     });
                 }
 
-                const error = 'Database error, please try again later or contact tech support';
-                db.Tutorial.create(req.body)
-                    .then( (newTutorial) => {
-                        // Add tag to tool
-                        tool.addTutorial(newTutorial);
-                        return res.json( {
-                            message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\``,
-                            id: newTutorial.id
-                        } );
-                    })
-                    .catch( (e) => {
-                        // Validation errors
-                        if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
-                            return res.status(500).json({
-                                status: 'Form invalid',
-                                errors: e.errors
-                            });
-                        }
-
-                        console.log(error, e);
-                        return res.status(500).json({
-                            error: error
-                        });
-                    });
+                console.log(error, e);
+                return res.status(500).json({
+                    error: error
+                });
             });
     },
-    updateTutorial: (req, res) => {
+    addToolToCollection: (req, res) => {
+        // Extract tool ID and collection ID
+        const toolId = req.body.tool;
+        const collectionId = req.body.collection;
+
+        // Find according tool
+        db.Tool.findByPk(toolId)
+        .then( (tool) => {
+            if(!tool) {
+                return res.status(404).json({
+                    message: `No tool found with id ${toolId}`
+                });
+            }
+
+            db.Collection.findByPk(collectionId)
+            .then( (collection) => {
+                if(!collection) {
+                    return res.status(404).json({
+                        message: `No collection found with id ${collectionId}`
+                    });
+                }
+
+                // Add tool to collection association
+                tool.addCollection(collection)
+                .then( () => {
+                    return res.json({
+                        message: `Tool \`${tool.title}\` successfully added to collection \`${collection.title}\``
+                    });
+                })
+                .catch( (e) => {
+                    console.log(e);
+                    return res.json({ error: 'An error occured. Please try again later.' });
+                } );
+            });
+
+        });
+    },
+    updateCollection: (req, res) => {
         const id      = req.params.id;
         const body    = req.body;
         const owner   = req.decoded.user.id;
@@ -108,16 +120,16 @@ module.exports = {
         const error   = `Error updating tool \`${id}\``;
 
         if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to update tutorial ${id}`);
+            console.log(`Unauthorized access attempt by ${owner} to update collection ${id}`);
             return res.status(401).json( { error: error } );
         }
 
-        db.Tutorial.update(body, {
+        db.Collection.update(body, {
             where: {
                 id: id
             }
         }).then( (result) => {
-            const message = `Tutorial \`${id}\` successfully updated`;
+            const message = `Collection \`${id}\` successfully updated`;
             return res.json( { message: message } );
         })
         .catch( (e) => {
@@ -133,23 +145,23 @@ module.exports = {
             return res.status(500).json( { error: error } );
         });
     },
-    deleteTutorial: (req, res) => {
+    deleteCollection: (req, res) => {
         const id      = req.params.id;
         const owner   = req.decoded.user.id;
         const isAdmin = req.decoded.user.isAdmin;
 
         if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to delete tutorial ${id}`);
+            console.log(`Unauthorized access attempt by ${owner} to delete collection ${id}`);
             return res.status(401).json( { error: error } );
         }
 
         // Delete User
-        db.Tutorial.destroy({
+        db.Collection.destroy({
             where: {
                 id: id
             }
         })
-        .then( (result) => res.json( { message: `Tutorial \`${id}\` successfully deleted` } ) )
+        .then( (result) => res.json( { message: `Collection \`${id}\` successfully deleted` } ) )
         .catch( (e) => {
             console.log(error, e);
             return res.status(500).json( { error: error } );

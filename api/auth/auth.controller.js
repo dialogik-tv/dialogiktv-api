@@ -12,9 +12,11 @@ module.exports = {
         db.User.create(body)
             .then( (result) => res.json( { message: `User \`${body.username}\` successfully created` } ) )
             .catch( (e) => {
-                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                // Validation errors
+                if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                     return res.status(500).json({
-                        error: 'Form invalid'
+                        status: 'Form invalid',
+                        errors: e.errors
                     });
                 }
 

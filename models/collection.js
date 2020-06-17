@@ -9,22 +9,26 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             autoIncrement: false
         },
-        name: {
+        title: {
             allowNull: false,
             type: DataTypes.STRING,
             unique: true,
             validate: {
-                isAlphanumeric: true,
                 notEmpty: true,
                 len: [3, 40]
             }
         },
-        description: DataTypes.TEXT
+        description: DataTypes.TEXT,
+        views: DataTypes.INTEGER.UNSIGNED
     }, {});
 
     // Associations
     Collection.associate = function(models) {
-        // Tool n:m Collection
+        Collection.belongsTo(models.User, {
+            onUpdate: "CASCADE",
+            onDelete: "SET NULL"
+        });
+
         Collection.belongsToMany(models.Tool, { through: 'ToolCollection' });
     };
 

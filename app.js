@@ -4,11 +4,12 @@ const cors = require('cors');
 const express = require("express");
 const app = express();
 
-const authRouter     = require("./api/auth/auth.router");
-const userRouter     = require("./api/user/user.router");
-const toolRouter     = require("./api/tool/tool.router");
-const tagRouter      = require("./api/tag/tag.router");
-const tutorialRouter = require("./api/tutorial/tutorial.router");
+const authRouter       = require("./api/auth/auth.router");
+const userRouter       = require("./api/user/user.router");
+const toolRouter       = require("./api/tool/tool.router");
+const tagRouter        = require("./api/tag/tag.router");
+const tutorialRouter   = require("./api/tutorial/tutorial.router");
+const collectionRouter = require("./api/collection/collection.router");
 
 // Setup CORS
 app.use(cors());
@@ -25,6 +26,7 @@ app.use(apiPrefix, userRouter);
 app.use(apiPrefix, toolRouter);
 app.use(apiPrefix, tagRouter);
 app.use(apiPrefix, tutorialRouter);
+app.use(apiPrefix, collectionRouter);
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';

@@ -11,7 +11,7 @@ module.exports = {
                     through: { attributes: [] }
                 },
             ],
-            attributes: ['id', 'name', 'description', 'createdAt'],
+            attributes: ['id', 'name', 'description', 'views', 'createdAt'],
             // order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             result.sort(function compare(a, b) {
@@ -56,10 +56,20 @@ module.exports = {
                     through: { attributes: [] }
                 },
             ],
-            attributes: ['id', 'name', 'description'],
+            attributes: ['id', 'name', 'description', 'views'],
             order: [['createdAt', 'DESC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
         }).then( (result) => {
-            return res.json(result);
+            // Increase view counter
+            db.Tag.update(
+                { views: (result.views + 1) },
+                { where: { id: result.id } }
+            )
+            .then( (updateResult) => res.json(result) )
+            // Catch errors but return result anyway
+            .catch( (e) => {
+                console.log(error, e);
+                return res.json(result);
+            });
         } );
     },
     addToolTag: (req, res) => {
@@ -83,7 +93,7 @@ module.exports = {
                     })
                     .catch( (e) => {
                         // Validation errors
-                        if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                        if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                             return res.status(500).json({
                                 status: 'Form invalid',
                                 errors: e.errors
@@ -137,9 +147,11 @@ module.exports = {
             return res.json( { message: message } );
         })
         .catch( (e) => {
-            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+            // Validation errors
+            if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
-                    error: 'Form invalid'
+                    status: 'Form invalid',
+                    errors: e.errors
                 });
             }
 

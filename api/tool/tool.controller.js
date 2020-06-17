@@ -58,6 +58,7 @@ module.exports = {
                 { where: { id: result.id } }
             )
             .then( (updateResult) => res.json(result) )
+            // Catch errors but return result anyway
             .catch( (e) => {
                 console.log(error, e);
                 return res.json(result);
@@ -87,7 +88,7 @@ module.exports = {
             } ) )
             .catch( (e) => {
                 // Validation errors
-                if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+                if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                     return res.status(500).json({
                         status: 'Form invalid',
                         errors: e.errors
@@ -137,9 +138,10 @@ module.exports = {
         })
         .catch( (e) => {
             // Validation errors
-            if(typeof e.errors !== 'undefined' && e.name == 'SequelizeValidationError') {
+            if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
-                    error: 'Form invalid'
+                    status: 'Form invalid',
+                    errors: e.errors
                 });
             }
 

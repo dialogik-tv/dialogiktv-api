@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
                 len: [3, 20]
             }
         },
-        description: DataTypes.TEXT
+        description: DataTypes.TEXT,
+        views: DataTypes.INTEGER.UNSIGNED
     }, {});
 
     // Associations

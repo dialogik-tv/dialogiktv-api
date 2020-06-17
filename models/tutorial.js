@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
                 isUrl: true
             }
         },
-        views: DataTypes.INTEGER,
+        views: DataTypes.INTEGER.UNSIGNED,
         status: DataTypes.INTEGER
     }, {
         scopes: {
@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
 
     // Associations
     Tutorial.associate = function(models) {
-        // Tutorial n:1 User
         Tutorial.belongsTo(models.User, {
             onUpdate: "CASCADE",
             onDelete: "SET NULL"

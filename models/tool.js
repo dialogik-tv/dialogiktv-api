@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
                 isUrl: true
             }
         },
-        views: DataTypes.INTEGER,
+        views: DataTypes.INTEGER.UNSIGNED,
         status: DataTypes.INTEGER
     }, {
         scopes: {
@@ -62,19 +62,13 @@ module.exports = (sequelize, DataTypes) => {
 
     // Associations
     Tool.associate = function(models) {
-        // Tool n:1 User
         Tool.belongsTo(models.User, {
             onUpdate: "CASCADE",
             onDelete: "SET NULL"
         });
 
-        // Tool n:m Tag
         Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
-
-        // Tool n:m Collection
         Tool.belongsToMany(models.Collection, { through: 'ToolCollection' });
-
-        // Tool n:m Tutorial
         Tool.belongsToMany(models.Tutorial, { through: 'ToolTutorial' });
     };
 
