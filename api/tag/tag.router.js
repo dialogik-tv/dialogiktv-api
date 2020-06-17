@@ -10,7 +10,7 @@ const {
 
 router.get("/tags", getTags);
 router.get("/tag/:tag", getTag);
-router.post("/tag/tool", checkToken, addToolTag);
+router.post("/tag/create", checkToken, addToolTag);
 router.patch("/tag/edit/:id", checkToken, updateTag);
 router.delete("/tag/delete/:id", checkToken, deleteTag);
 
