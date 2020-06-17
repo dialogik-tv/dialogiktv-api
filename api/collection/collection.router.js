@@ -5,6 +5,7 @@ const {
     getCollection,
     createCollection,
     addToolToCollection,
+    removeToolFromCollection,
     updateCollection,
     deleteCollection
 } = require("./collection.controller");
@@ -12,7 +13,8 @@ const {
 router.get("/collections", getCollections);
 router.get("/collection/:id", getCollection);
 router.post("/collection/create", checkToken, createCollection);
-router.post("/collection/add-tool", checkToken, addToolToCollection);
+router.post("/collection/add", checkToken, addToolToCollection);
+router.post("/collection/remove", checkToken, removeToolFromCollection);
 router.patch("/collection/edit/:id", checkToken, updateCollection);
 router.delete("/collection/delete/:id", checkToken, deleteCollection);
 

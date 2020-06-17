@@ -57,7 +57,7 @@ module.exports = {
                 },
             ],
             attributes: ['id', 'name', 'description', 'views'],
-            order: [['createdAt', 'DESC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
+            order: [['createdAt', 'DESC'], [db.Tool, 'title', 'ASC'], [db.Tool, db.Tag, 'name', 'ASC'], [db.Tool, db.Tutorial, 'createdAt', 'DESC']]
         }).then( (result) => {
             // Increase view counter
             db.Tag.update(

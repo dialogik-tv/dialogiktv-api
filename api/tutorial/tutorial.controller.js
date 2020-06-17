@@ -14,18 +14,8 @@ module.exports = {
             ],
             order: [['createdAt', 'DESC'], [db.Tool, 'title', 'ASC']]
         }).then( (result) => {
-            result.sort(function compare(a, b) {
-                if(a.Tools.length < b.Tools.length) {
-                    return 1;
-                }
-                if(a.Tools.length > b.Tools.length) {
-                    return -1;
-                }
-                return 0;
-            });
-
             return res.json(result)
-        } );
+        });
     },
     getTutorial: (req, res) => {
         const id = req.params.id;
@@ -55,7 +45,7 @@ module.exports = {
                 console.log(error, e);
                 return res.json(result);
             });
-        } );
+        });
     },
     addToolTutorial: (req, res) => {
         // Extract tool ID and remove from payload
@@ -82,7 +72,7 @@ module.exports = {
                         return res.json( {
                             message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\``,
                             id: newTutorial.id
-                        } );
+                        });
                     })
                     .catch( (e) => {
                         // Validation errors
@@ -109,7 +99,7 @@ module.exports = {
 
         if(!isAdmin) {
             console.log(`Unauthorized access attempt by ${owner} to update tutorial ${id}`);
-            return res.status(401).json( { error: error } );
+            return res.status(401).json({ error: error });
         }
 
         db.Tutorial.update(body, {
@@ -118,7 +108,7 @@ module.exports = {
             }
         }).then( (result) => {
             const message = `Tutorial \`${id}\` successfully updated`;
-            return res.json( { message: message } );
+            return res.json({ message: message });
         })
         .catch( (e) => {
             // Validation errors
@@ -130,7 +120,7 @@ module.exports = {
             }
 
             console.log(error, e);
-            return res.status(500).json( { error: error } );
+            return res.status(500).json({ error: error });
         });
     },
     deleteTutorial: (req, res) => {
@@ -140,7 +130,7 @@ module.exports = {
 
         if(!isAdmin) {
             console.log(`Unauthorized access attempt by ${owner} to delete tutorial ${id}`);
-            return res.status(401).json( { error: error } );
+            return res.status(401).json({ error: error });
         }
 
         // Delete User
@@ -152,7 +142,7 @@ module.exports = {
         .then( (result) => res.json( { message: `Tutorial \`${id}\` successfully deleted` } ) )
         .catch( (e) => {
             console.log(error, e);
-            return res.status(500).json( { error: error } );
+            return res.status(500).json({ error: error });
         });
     },
 };

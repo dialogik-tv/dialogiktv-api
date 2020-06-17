@@ -80,7 +80,6 @@ module.exports = {
         const toolId = req.body.tool;
         const collectionId = req.body.collection;
 
-        // Find according tool
         db.Tool.findByPk(toolId)
         .then( (tool) => {
             if(!tool) {
@@ -97,11 +96,45 @@ module.exports = {
                     });
                 }
 
-                // Add tool to collection association
-                tool.addCollection(collection)
+                collection.addTool(tool)
                 .then( () => {
                     return res.json({
                         message: `Tool \`${tool.title}\` successfully added to collection \`${collection.title}\``
+                    });
+                })
+                .catch( (e) => {
+                    console.log(e);
+                    return res.json({ error: 'An error occured. Please try again later.' });
+                } );
+            });
+
+        });
+    },
+    removeToolFromCollection: (req, res) => {
+        // Extract tool ID and collection ID
+        const toolId = req.body.tool;
+        const collectionId = req.body.collection;
+
+        db.Tool.findByPk(toolId)
+        .then( (tool) => {
+            if(!tool) {
+                return res.status(404).json({
+                    message: `No tool found with id ${toolId}`
+                });
+            }
+
+            db.Collection.findByPk(collectionId)
+            .then( (collection) => {
+                if(!collection) {
+                    return res.status(404).json({
+                        message: `No collection found with id ${collectionId}`
+                    });
+                }
+
+                collection.removeTool(tool)
+                .then( () => {
+                    return res.json({
+                        message: `Tool \`${tool.title}\` removed added from collection \`${collection.title}\``
                     });
                 })
                 .catch( (e) => {

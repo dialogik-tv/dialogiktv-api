@@ -18,7 +18,7 @@ module.exports = {
                 }
             ],
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
-            order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
+            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
         }).then( (result) => {
             return res.json(result)
         } );
