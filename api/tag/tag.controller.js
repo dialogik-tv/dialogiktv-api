@@ -8,6 +8,22 @@ module.exports = {
                 {
                     model: db.Tool,
                     attributes: ['id', 'title', 'slug', 'status', 'views'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title', 'status', 'views'],
+                            through: { attributes: [] }
+                        }
+                    ],
                     through: { attributes: [] }
                 },
             ],

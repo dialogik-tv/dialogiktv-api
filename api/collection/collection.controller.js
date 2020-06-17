@@ -8,6 +8,22 @@ module.exports = {
                 { model: db.User, attributes: ['username']},
                 {
                     model: db.Tool,
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title', 'status', 'views'],
+                            through: { attributes: [] }
+                        }
+                    ],
                     attributes: ['id', 'title', 'slug', 'status', 'views'],
                     through: { attributes: [] }
                 },
@@ -29,7 +45,23 @@ module.exports = {
                 { model: db.User, attributes: ['username']},
                 {
                     model: db.Tool,
-                    attributes: ['id', 'title', 'slug', 'status', 'views'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title', 'status', 'views'],
+                            through: { attributes: [] }
+                        }
+                    ],
+                    attributes: ['id', 'title', 'description', 'slug', 'status', 'views'],
                     through: { attributes: [] }
                 }
             ],
