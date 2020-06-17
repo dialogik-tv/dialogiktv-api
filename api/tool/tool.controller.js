@@ -107,6 +107,16 @@ module.exports = {
         const owner = req.decoded.user.id;
         const error = `Error updating tool \`${id}\``;
 
+        // Make sure that only specified attributes can be updated
+        // (e.g. users shall not be able to update views or status)
+        const allowedKeys = ['title', 'description', 'vendor', 'vendorLink', 'docLink'];
+        const usedKeys = Object.keys(body);
+        for(const key in usedKeys) {
+            if(!allowedKeys.includes(usedKeys[key])) {
+                delete body[usedKeys[key]];
+            }
+        }
+
         // Update user
         db.Tool.update(body, {
             where: {
