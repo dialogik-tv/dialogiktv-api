@@ -1,4 +1,7 @@
 'use strict';
+
+const Version = require('sequelize-version');
+
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const User = sequelize.define('User', {
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                 isAlphanumeric: true,
                 notNull: true,
                 notEmpty: true,
-                len: [6, 24],
+                len: [4, 24],
             }
         },
         firstname: {
@@ -56,6 +59,19 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         scopes: {}
     });
+
+    // Version
+    const versionOptions = {
+        prefix: '',
+        suffix: 'Log',
+        // attributePrefix: 'revision',
+        // schema: 'audit',
+        //attributes to ignore from origin model
+        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'password'],
+        tableUnderscored: false,
+        underscored: false
+    }
+    const UserLog = new Version(User, versionOptions);
 
     // Associations
     User.associate = function(models) {
