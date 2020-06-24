@@ -42,14 +42,14 @@ module.exports = {
                 const check = compareSync(body.password, result.password);
 
                 if (check) {
-                    let data = {
-                        id: result.dataValues.id,
-                        username: result.dataValues.username,
+                    const data = {
+                        id:        result.dataValues.id,
+                        username:  result.dataValues.username,
                         firstname: result.dataValues.firstname,
-                        lastname: result.dataValues.lastname,
-                        email: result.dataValues.email,
-                        status: result.dataValues.status,
-                        isAdmin: result.dataValues.isAdmin,
+                        lastname:  result.dataValues.lastname,
+                        email:     result.dataValues.email,
+                        status:    result.dataValues.status,
+                        isAdmin:   result.dataValues.isAdmin,
                         createdAt: result.dataValues.createdAt,
                         updatedAt: result.dataValues.updatedAt
                     };

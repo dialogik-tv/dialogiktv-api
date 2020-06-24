@@ -77,7 +77,10 @@ module.exports = {
             suffix += Math.random().toString(36).replace(/[^A-Za-z0-9]+/g, '');
         }
 
+        // Set owner
         body.UserId = owner;
+
+        // Set slug
         body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
         body.slug = body.slug + '-' + suffix;
 
@@ -102,14 +105,12 @@ module.exports = {
                 })
             });
     },
-    updateTool: (req, res) => {
+    updateTool: async (req, res) => {
         const id    = req.params.id;
         const body  = req.body;
         const owner = req.decoded.user.id;
-        const error = `Error updating tool \`${id}\``;
 
         // Make sure that only specified attributes can be updated
-        // (e.g. users shall not be able to update views or status)
         const allowedKeys = ['title', 'description', 'vendor', 'vendorLink', 'docLink'];
         const usedKeys = Object.keys(body);
         for(const key in usedKeys) {
@@ -118,25 +119,24 @@ module.exports = {
             }
         }
 
-        // Update user
-        db.Tool.update(body, {
-            where: {
-                id: id,
-                UserId: owner
-            }
-        }).then( (result) => {
-            // In case owner's id does not match any entry in database
-            result = result[0];
-            if(result !== 1) {
-                return res.status(500).json({
-                    error: error
-                })
+        try {
+            const tool = await db.Tool.findByPk(id);
+
+            if(!tool) { return res.status(404).json({ error: 'Tool not found' }); }
+
+            if(tool.UserId !== owner) {
+                const error = `Unauthorized access attempt by ${owner} to update tool ${id}`;
+                console.log(error);
+                return res.status(401).json({ error: error });
             }
 
-            const message = `Tool \`${id}\` successfully updated`;
-            return res.json( { message: message } );
-        })
-        .catch( (e) => {
+            for(const [key, val] of Object.entries(req.body)) {
+                tool[key] = val;
+            }
+            tool.save();
+            const message = `Tool \`${tool.title}\` successfully updated`;
+            return res.json({message: message});
+        } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
@@ -145,9 +145,10 @@ module.exports = {
                 });
             }
 
+            const error = `Error updating Tool \`${id}\``;
             console.log(error, e);
-            return res.status(500).json( { error: error } );
-        });
+            return res.status(500).json( {error:error} );
+        }
     },
     deleteTool: (req, res) => {
         const id    = req.params.id;

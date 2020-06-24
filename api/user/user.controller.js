@@ -13,7 +13,7 @@ module.exports = {
                 id: owner
             }
         }).then( (result) => {
-            let data = result.dataValues;
+            const data = result.dataValues;
 
             // Don't show password or deletedAt
             delete data.password;
@@ -47,10 +47,20 @@ module.exports = {
             return res.json(result);
         });
     },
-    updateUser: (req, res) => {
+    updateUser: async (req, res) => {
         const body = req.body;
         const owner = req.decoded.user.id;
         const username = req.decoded.user.username;
+
+        // Make sure that only specified attributes can be updated
+        // (e.g. users shall not be able to update status or isAdmin)
+        const allowedKeys = ['firstname', 'lastname', 'email', 'password'];
+        const usedKeys = Object.keys(body);
+        for(const key in usedKeys) {
+            if(!allowedKeys.includes(usedKeys[key])) {
+                delete body[usedKeys[key]];
+            }
+        }
 
         // Hash password if passed
         if(typeof body.password !== 'undefined') {
@@ -58,26 +68,15 @@ module.exports = {
             body.password = hashSync(body.password, salt);
         }
 
-        // Update user
-        db.User.update(body, {
-            where: {
-                id: owner
+        try {
+            const user = await db.User.findByPk(owner);
+            for(const [key, val] of Object.entries(req.body)) {
+                user[key] = val;
             }
-        }).then( (result) => {
-            result = result[0];
-
-            // In case owner's id does not match any entry in database
-            if(result !== 1) {
-                return res.status(500).json({
-                    error: `Error updating ${username}`
-                })
-            }
-
-            // Else
-            let message = `User ${username} successfully updated`;
+            user.save();
+            const message = `User ${username} successfully updated`;
             return res.json({message: message});
-        })
-        .catch( (e) => {
+        } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
@@ -86,10 +85,10 @@ module.exports = {
                 });
             }
 
-            let error = `Error updating user ${username}`;
+            const error = `Error updating user ${username}`;
             console.log(error, e);
             return res.status(500).json( {error:error} );
-        });
+        }
     },
     deleteUser: (req, res) => {
         const owner = req.decoded.user.id;

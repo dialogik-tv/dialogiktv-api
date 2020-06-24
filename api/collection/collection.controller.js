@@ -68,6 +68,7 @@ module.exports = {
             order: [[db.Tool, 'title', 'ASC']]
         }).then( (result) => {
             // Increase view counter
+
             db.Collection.update(
                 { views: (result.views + 1) },
                 { where: { id: result.id } }
@@ -177,27 +178,38 @@ module.exports = {
 
         });
     },
-    updateCollection: (req, res) => {
+    updateCollection: async (req, res) => {
         const id      = req.params.id;
         const body    = req.body;
         const owner   = req.decoded.user.id;
-        const isAdmin = req.decoded.user.isAdmin;
-        const error   = `Error updating tool \`${id}\``;
 
-        if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to update collection ${id}`);
-            return res.status(401).json( { error: error } );
+        // Make sure that only specified attributes can be updated
+        const allowedKeys = ['title', 'description'];
+        const usedKeys = Object.keys(body);
+        for(const key in usedKeys) {
+            if(!allowedKeys.includes(usedKeys[key])) {
+                delete body[usedKeys[key]];
+            }
         }
 
-        db.Collection.update(body, {
-            where: {
-                id: id
+        try {
+            const collection = await db.Collection.findByPk(id);
+
+            if(!collection) { return res.status(404).json({ error: 'Collection not found' }); }
+
+            if(collection.UserId !== owner) {
+                const error = `Unauthorized access attempt by ${owner} to update collection ${id}`;
+                console.log(error);
+                return res.status(401).json({ error: error });
             }
-        }).then( (result) => {
-            const message = `Collection \`${id}\` successfully updated`;
-            return res.json( { message: message } );
-        })
-        .catch( (e) => {
+
+            for(const [key, val] of Object.entries(body)) {
+                collection[key] = val;
+            }
+            collection.save();
+            const message = `Collection \`${collection.title}\` successfully updated`;
+            return res.json({message: message});
+        } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
@@ -206,9 +218,36 @@ module.exports = {
                 });
             }
 
+            const error = `Error updating Collection \`${id}\``;
             console.log(error, e);
-            return res.status(500).json( { error: error } );
-        });
+            return res.status(500).json( {error:error} );
+        }
+
+        // if(!isAdmin) {
+        //     console.log(`Unauthorized access attempt by ${owner} to update collection ${id}`);
+        //     return res.status(401).json( { error: error } );
+        // }
+        //
+        // db.Collection.update(body, {
+        //     where: {
+        //         id: id
+        //     }
+        // }).then( (result) => {
+        //     const message = `Collection \`${id}\` successfully updated`;
+        //     return res.json( { message: message } );
+        // })
+        // .catch( (e) => {
+        //     // Validation errors
+        //     if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
+        //         return res.status(500).json({
+        //             status: 'Form invalid',
+        //             errors: e.errors
+        //         });
+        //     }
+        //
+        //     console.log(error, e);
+        //     return res.status(500).json( { error: error } );
+        // });
     },
     deleteCollection: (req, res) => {
         const id      = req.params.id;

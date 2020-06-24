@@ -60,25 +60,18 @@ module.exports = (sequelize, DataTypes) => {
         scopes: {}
     });
 
-    // Version
-    const versionOptions = {
-        prefix: '',
-        suffix: 'Log',
-        // attributePrefix: 'revision',
-        // schema: 'audit',
-        //attributes to ignore from origin model
-        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'password'],
-        tableUnderscored: false,
-        underscored: false
-    }
-    const UserLog = new Version(User, versionOptions);
-
     // Associations
     User.associate = function(models) {
         User.hasMany(models.Tool);
         User.hasMany(models.Tutorial);
         User.hasMany(models.Collection);
     };
+
+    // Version
+    const versionOptions = {
+        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'password']
+    }
+    const UserLog = new Version(User, versionOptions);
 
     // Modify JSON output
     User.prototype.toJSON = function () {

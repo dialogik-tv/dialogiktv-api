@@ -1,4 +1,7 @@
 'use strict';
+
+const Version = require('sequelize-version');
+
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const Tool = sequelize.define('Tool', {
@@ -49,7 +52,10 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         views: DataTypes.INTEGER.UNSIGNED,
-        status: DataTypes.INTEGER
+        status: {
+            type: DataTypes.INTEGER,
+            defaultValue: 50
+        }
     }, {
         scopes: {
             published: {
@@ -71,6 +77,12 @@ module.exports = (sequelize, DataTypes) => {
         Tool.belongsToMany(models.Collection, { through: 'ToolCollection' });
         Tool.belongsToMany(models.Tutorial, { through: 'ToolTutorial' });
     };
+
+    // Version
+    const versionOptions = {
+        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'views']
+    }
+    const ToolLog = new Version(Tool, versionOptions);
 
     // Modify JSON output
     Tool.prototype.toJSON = function () {

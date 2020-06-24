@@ -1,4 +1,7 @@
 'use strict';
+
+const Version = require('sequelize-version');
+
 module.exports = (sequelize, DataTypes) => {
     // Attributes
     const Collection = sequelize.define('Collection', {
@@ -31,6 +34,12 @@ module.exports = (sequelize, DataTypes) => {
 
         Collection.belongsToMany(models.Tool, { through: 'ToolCollection' });
     };
+
+    // Version
+    const versionOptions = {
+        exclude: ['createdAt', 'updatedAt', 'deletedAt', 'views']
+    }
+    const CollectionLog = new Version(Collection, versionOptions);
 
     // Modify JSON output
     Collection.prototype.toJSON = function () {

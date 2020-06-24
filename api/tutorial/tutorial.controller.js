@@ -90,27 +90,38 @@ module.exports = {
                     });
             });
     },
-    updateTutorial: (req, res) => {
+    updateTutorial: async (req, res) => {
         const id      = req.params.id;
         const body    = req.body;
         const owner   = req.decoded.user.id;
-        const isAdmin = req.decoded.user.isAdmin;
-        const error   = `Error updating tool \`${id}\``;
 
-        if(!isAdmin) {
-            console.log(`Unauthorized access attempt by ${owner} to update tutorial ${id}`);
-            return res.status(401).json({ error: error });
+        // Make sure that only specified attributes can be updated
+        const allowedKeys = ['title', 'description', 'link'];
+        const usedKeys = Object.keys(body);
+        for(const key in usedKeys) {
+            if(!allowedKeys.includes(usedKeys[key])) {
+                delete body[usedKeys[key]];
+            }
         }
 
-        db.Tutorial.update(body, {
-            where: {
-                id: id
+        try {
+            const tutorial = await db.Tutorial.findByPk(id);
+
+            if(!tutorial) { return res.status(404).json({ error: 'Tutorial not found' }); }
+
+            if(tutorial.UserId !== owner) {
+                const error = `Unauthorized access attempt by ${owner} to update tutorial ${id}`;
+                console.log(error);
+                return res.status(401).json({ error: error });
             }
-        }).then( (result) => {
-            const message = `Tutorial \`${id}\` successfully updated`;
-            return res.json({ message: message });
-        })
-        .catch( (e) => {
+
+            for(const [key, val] of Object.entries(req.body)) {
+                tutorial[key] = val;
+            }
+            tutorial.save();
+            const message = `Tutorial \`${tutorial.title}\` successfully updated`;
+            return res.json({message: message});
+        } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
                 return res.status(500).json({
@@ -119,9 +130,10 @@ module.exports = {
                 });
             }
 
+            const error = `Error updating Tutorial \`${id}\``;
             console.log(error, e);
-            return res.status(500).json({ error: error });
-        });
+            return res.status(500).json( {error:error} );
+        }
     },
     deleteTutorial: (req, res) => {
         const id      = req.params.id;
