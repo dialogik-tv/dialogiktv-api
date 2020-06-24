@@ -71,10 +71,7 @@ module.exports = (sequelize, DataTypes) => {
         delete values.deletedAt;
         delete values.UserId;
         const old = values.status;
-        values.status = {
-            code: old,
-            name: status[old]
-        };
+        values.statusName = status[values.status];
         return values;
     }
 

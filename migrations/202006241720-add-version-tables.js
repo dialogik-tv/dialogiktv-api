@@ -2,7 +2,7 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return Promise.all([
-            queryInterface.createTable('Version_Collection', {
+            queryInterface.createTable('version_Collection', {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
@@ -26,7 +26,7 @@ module.exports = {
                     type: Sequelize.DATE
                 }
             }),
-            queryInterface.createTable('Version_Tool', {
+            queryInterface.createTable('version_Tool', {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
@@ -56,7 +56,7 @@ module.exports = {
                     type: Sequelize.DATE
                 }
             }),
-            queryInterface.createTable('Version_Tutorial', {
+            queryInterface.createTable('version_Tutorial', {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
@@ -82,7 +82,7 @@ module.exports = {
                     type: Sequelize.DATE
                 }
             }),
-            queryInterface.createTable('Version_User', {
+            queryInterface.createTable('version_User', {
                 id: {
                     type: Sequelize.UUID,
                     defaultValue: Sequelize.UUIDV4,
@@ -115,10 +115,10 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         return Promise.all([
-            queryInterface.dropTable('Version_Collection'),
-            queryInterface.dropTable('Version_Tool'),
-            queryInterface.dropTable('Version_Tutorial'),
-            queryInterface.dropTable('Version_User'),
+            queryInterface.dropTable('version_Collection'),
+            queryInterface.dropTable('version_Tool'),
+            queryInterface.dropTable('version_Tutorial'),
+            queryInterface.dropTable('version_User'),
         ]);
     }
 }
