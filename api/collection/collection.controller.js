@@ -5,13 +5,13 @@ module.exports = {
     getCollections: (req, res) => {
         db.Collection.findAll({
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tool,
                     include: [
                         {
                             model: db.User,
-                            attributes: ['username']
+                            attributes: ['id', 'username']
                         },
                         {
                             model: db.Tag,
@@ -42,13 +42,13 @@ module.exports = {
                 id: id
             },
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tool,
                     include: [
                         {
                             model: db.User,
-                            attributes: ['username']
+                            attributes: ['id', 'username']
                         },
                         {
                             model: db.Tag,

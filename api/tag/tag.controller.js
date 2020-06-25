@@ -11,7 +11,7 @@ module.exports = {
                     include: [
                         {
                             model: db.User,
-                            attributes: ['username']
+                            attributes: ['id', 'username']
                         },
                         {
                             model: db.Tag,
@@ -56,7 +56,7 @@ module.exports = {
                     include: [
                         {
                             model: db.User,
-                            attributes: ['username']
+                            attributes: ['id', 'username']
                         },
                         {
                             model: db.Tag,

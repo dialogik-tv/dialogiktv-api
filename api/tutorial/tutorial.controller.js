@@ -5,7 +5,7 @@ module.exports = {
     getTutorials: (req, res) => {
         db.Tutorial.scope('published').findAll({
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tool,
                     attributes: ['id', 'title', 'slug', 'status', 'views'],
@@ -25,7 +25,7 @@ module.exports = {
                 id: id
             },
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tool,
                     attributes: ['id', 'title', 'slug', 'status', 'views'],

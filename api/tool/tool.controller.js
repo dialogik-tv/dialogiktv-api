@@ -5,7 +5,7 @@ module.exports = {
     getTools: (req, res) => {
         db.Tool.scope('published').findAll({
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tag,
                     attributes: ['name'],
@@ -32,7 +32,7 @@ module.exports = {
                 { slug: slug }
             ),
             include: [
-                { model: db.User, attributes: ['username']},
+                { model: db.User, attributes: ['id', 'username']},
                 {
                     model: db.Tag,
                     attributes: ['name'],
