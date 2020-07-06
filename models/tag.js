@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 is: /^[a-z\d\s]+$/i,
                 notEmpty: true,
-                len: [3, 20]
+                len: [3, 32]
             }
         },
         description: DataTypes.TEXT,
