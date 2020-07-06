@@ -89,7 +89,7 @@ module.exports = {
         } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
-                return res.status(500).json({
+                return res.status(422).json({
                     status: 'Form invalid',
                     errors: e.errors
                 });
@@ -136,7 +136,7 @@ module.exports = {
         } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
-                return res.status(500).json({
+                return res.status(422).json({
                     status: 'Form invalid',
                     errors: e.errors
                 });
