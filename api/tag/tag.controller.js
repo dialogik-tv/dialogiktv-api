@@ -89,8 +89,8 @@ module.exports = {
         } );
     },
     addToolTag: (req, res) => {
-        const toolId = req.body.tool;
-        const tagInput = req.body.tag.replace(/[^A-Za-z0-9\s]/g,'');
+        const toolId = req.body.tool
+        const tagInput = req.body.tag.replace(/^[a-z\d\s]+$/i,'');
 
         db.Tool.findByPk(toolId)
             .then( (tool) => {
