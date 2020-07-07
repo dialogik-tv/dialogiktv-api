@@ -21,6 +21,10 @@ app.use(express.json());
 
 console.log('App starting...');
 
+if(typeof process.env.NODE_ENV == 'undefined' || process.env.NODE_ENV == 'development') {
+    console.log(`[Database] ${process.env.DB_USER}@${process.env.DB_HOST}/${process.env.DB_DATABASE}`);
+}
+
 let apiPrefix = '/api';
 app.use(apiPrefix, authRouter);
 app.use(apiPrefix, userRouter);
