@@ -76,6 +76,7 @@ module.exports = (sequelize, DataTypes) => {
         Tool.belongsToMany(models.Tag, { through: 'ToolTag' });
         Tool.belongsToMany(models.Collection, { through: 'ToolCollection' });
         Tool.belongsToMany(models.Tutorial, { through: 'ToolTutorial' });
+        Tool.belongsToMany(models.Category, { through: 'ToolCategory' });
     };
 
     // Version
@@ -96,7 +97,6 @@ module.exports = (sequelize, DataTypes) => {
         var values = Object.assign({}, this.get());
         delete values.deletedAt;
         delete values.UserId;
-        const old = values.status;
         values.statusName = status[values.status];
         return values;
     }

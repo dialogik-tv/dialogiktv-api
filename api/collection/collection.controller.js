@@ -86,7 +86,7 @@ module.exports = {
         req.body.UserId = req.decoded.user.id;
 
         const error = 'Database error, please try again later or contact tech support';
-        db.Collection.create(req.body)
+        db.Collection.create(req.body, { fields: ['title', 'description'] })
             .then( (collection) => {
                 return res.json( {
                     message: `Collection \`${req.body.title}\` successfully created`,
@@ -167,7 +167,7 @@ module.exports = {
                 collection.removeTool(tool)
                 .then( () => {
                     return res.json({
-                        message: `Tool \`${tool.title}\` removed added from collection \`${collection.title}\``
+                        message: `Tool \`${tool.title}\` removed from collection \`${collection.title}\``
                     });
                 })
                 .catch( (e) => {
@@ -206,7 +206,7 @@ module.exports = {
             for(const [key, val] of Object.entries(body)) {
                 collection[key] = val;
             }
-            collection.save();
+            await collection.save();
             const message = `Collection \`${collection.title}\` successfully updated`;
             return res.json({message: message});
         } catch (e) {
@@ -222,32 +222,6 @@ module.exports = {
             console.log(error, e);
             return res.status(500).json( {error:error} );
         }
-
-        // if(!isAdmin) {
-        //     console.log(`Unauthorized access attempt by ${owner} to update collection ${id}`);
-        //     return res.status(401).json( { error: error } );
-        // }
-        //
-        // db.Collection.update(body, {
-        //     where: {
-        //         id: id
-        //     }
-        // }).then( (result) => {
-        //     const message = `Collection \`${id}\` successfully updated`;
-        //     return res.json( { message: message } );
-        // })
-        // .catch( (e) => {
-        //     // Validation errors
-        //     if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
-        //         return res.status(422).json({
-        //             status: 'Form invalid',
-        //             errors: e.errors
-        //         });
-        //     }
-        //
-        //     console.log(error, e);
-        //     return res.status(500).json( { error: error } );
-        // });
     },
     deleteCollection: (req, res) => {
         const id      = req.params.id;

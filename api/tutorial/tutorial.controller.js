@@ -65,7 +65,9 @@ module.exports = {
                 }
 
                 const error = 'Database error, please try again later or contact tech support';
-                db.Tutorial.create(req.body)
+                db.Tutorial.create(req.body, {
+                    fields: ['title', 'description', 'link']
+                })
                     .then( (newTutorial) => {
                         // Add tag to tool
                         tool.addTutorial(newTutorial);
@@ -118,7 +120,7 @@ module.exports = {
             for(const [key, val] of Object.entries(req.body)) {
                 tutorial[key] = val;
             }
-            tutorial.save();
+            await tutorial.save();
             const message = `Tutorial \`${tutorial.title}\` successfully updated`;
             return res.json({message: message});
         } catch (e) {

@@ -1,6 +1,6 @@
 # The dialogikTV API
 
-Based on Node.js with Express.js and a MySQL database, this API servers as the main data provider for the dialogikTV frontend webapplication.
+Based on Node.js with Express.js and a sequelized MySQL database, this API servers as the main data provider for the dialogikTV frontend webapplication.
 
 ## Develop and contribute
 

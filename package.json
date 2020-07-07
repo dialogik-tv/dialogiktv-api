@@ -1,7 +1,7 @@
 {
     "name": "dialogiktv-api",
     "version": "0.0.1",
-    "description": "The dialogikTV API.",
+    "description": "Based on Node.js with Express.js and a sequelized MySQL database, this API servers as the main data provider for the dialogikTV frontend webapplication.",
     "main": "app.js",
     "scripts": {
         "start": "nodemon app.js",

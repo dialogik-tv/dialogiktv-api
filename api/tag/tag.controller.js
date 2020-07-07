@@ -138,11 +138,7 @@ module.exports = {
             return res.status(401).json( { error: error } );
         }
 
-        db.Tag.update(body, {
-            where: {
-                id: id
-            }
-        }).then( (result) => {
+        db.Tag.update(body, { where: { id: id } }).then( (result) => {
             const message = `Tag \`${id}\` successfully updated`;
             return res.json( { message: message } );
         })

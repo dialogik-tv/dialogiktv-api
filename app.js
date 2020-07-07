@@ -10,6 +10,7 @@ const toolRouter       = require("./api/tool/tool.router");
 const tagRouter        = require("./api/tag/tag.router");
 const tutorialRouter   = require("./api/tutorial/tutorial.router");
 const collectionRouter = require("./api/collection/collection.router");
+const categoryRouter   = require("./api/category/category.router");
 
 // Setup CORS
 app.use(cors());
@@ -27,6 +28,7 @@ app.use(apiPrefix, toolRouter);
 app.use(apiPrefix, tagRouter);
 app.use(apiPrefix, tutorialRouter);
 app.use(apiPrefix, collectionRouter);
+app.use(apiPrefix, categoryRouter);
 
 const port = process.env.PORT || 3000;
 const host = process.env.HOST || 'localhost';

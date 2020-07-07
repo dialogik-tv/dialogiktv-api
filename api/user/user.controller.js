@@ -73,7 +73,7 @@ module.exports = {
             for(const [key, val] of Object.entries(req.body)) {
                 user[key] = val;
             }
-            user.save();
+            await user.save();
             const message = `User ${username} successfully updated`;
             return res.json({message: message});
         } catch (e) {

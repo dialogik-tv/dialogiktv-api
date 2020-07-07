@@ -79,9 +79,11 @@ module.exports = {
         body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
 
         try {
-            const tool = await db.Tool.create(body);
+            const tool = await db.Tool.create(body, {
+                fields: ['title', 'description', 'link', 'vendor', 'vendorLink', 'docLink']
+            });
             tool.slug += '-' + tool.id;
-            tool.save();
+            await tool.save();
             return res.json( {
                 message: `Tool ${tool.title} successfully created`,
                 slug: tool.slug
@@ -130,7 +132,7 @@ module.exports = {
             for(const [key, val] of Object.entries(req.body)) {
                 tool[key] = val;
             }
-            tool.save();
+            await tool.save();
             const message = `Tool \`${tool.title}\` successfully updated`;
             return res.json({message: message});
         } catch (e) {

@@ -9,7 +9,7 @@ module.exports = {
         body.password = hashSync(body.password, salt);
         body.status = 0;
 
-        db.User.create(body)
+        db.User.create(body, { fields: ['username', 'firstname', 'lastname', 'email', 'password'] })
             .then( (result) => res.json( { message: `User \`${body.username}\` successfully created` } ) )
             .catch( (e) => {
                 // Validation errors
