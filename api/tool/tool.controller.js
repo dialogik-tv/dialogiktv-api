@@ -82,17 +82,14 @@ module.exports = {
         const body  = req.body;
         const owner = req.decoded.user.id;
 
-        // Set owner
-        body.UserId = owner;
-
-        // Set slug
-        body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-");
-
         try {
             const tool = await db.Tool.create(body, {
                 fields: ['title', 'description', 'link', 'vendor', 'vendorLink', 'docLink']
             });
-            tool.slug += '-' + tool.id;
+            const slug = tool.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-")
+            tool.slug = slug + '-' + tool.id;
+            tool.status = 50;
+            tool.UserId = owner;
             await tool.save();
             return res.json( {
                 message: `Tool ${tool.title} successfully created`,
