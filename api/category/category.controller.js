@@ -119,6 +119,7 @@ module.exports = {
         // Extract tool ID and category ID
         const toolId = req.body.tool;
         const categoryId = req.body.category;
+        const relevance = req.body.relevance;
 
         try {
             const tool = await db.Tool.findByPk(toolId);
@@ -135,7 +136,11 @@ module.exports = {
                 });
             }
 
-            await category.addTool(tool);
+            if(typeof relevance != 'undefined') {
+                await category.addTool(tool, { through: { relevance: relevance }});
+            } else {
+                await category.addTool(tool);
+            }
             return res.json({
                 message: `Tool \`${tool.title}\` successfully added to category \`${category.name}\``
             });
