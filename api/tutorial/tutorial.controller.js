@@ -9,6 +9,17 @@ module.exports = {
                 {
                     model: db.Tool,
                     attributes: ['id', 'title', 'slug', 'status', 'views'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['id', 'username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        }
+                    ],
                     through: { attributes: [] }
                 },
             ],

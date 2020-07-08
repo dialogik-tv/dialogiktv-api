@@ -12,18 +12,13 @@ module.exports = {
                     through: { attributes: [] }
                 },
                 {
-                    model: db.Tutorial,
-                    attributes: ['id', 'title', 'status', 'views'],
-                    through: { attributes: [] }
-                },
-                {
                     model: db.Category,
                     attributes: ['id', 'name', 'views'],
-                    through: { attributes: [] }
+                    through: { attributes: ['relevance'] }
                 }
             ],
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
-            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC'], [db.Tutorial, 'title', 'ASC']]
+            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             return res.json(result)
         } );
@@ -51,7 +46,7 @@ module.exports = {
                 {
                     model: db.Category,
                     attributes: ['id', 'name', 'views'],
-                    through: { attributes: [] }
+                    through: { attributes: ['relevance'] }
                 }
             ],
             order: [[db.Tag, 'name', 'ASC'], [db.Tutorial, 'createdAt', 'DESC']]

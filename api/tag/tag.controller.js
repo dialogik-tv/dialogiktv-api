@@ -17,11 +17,6 @@ module.exports = {
                             model: db.Tag,
                             attributes: ['name'],
                             through: { attributes: [] }
-                        },
-                        {
-                            model: db.Tutorial,
-                            attributes: ['id', 'title', 'status', 'views'],
-                            through: { attributes: [] }
                         }
                     ],
                     through: { attributes: [] }

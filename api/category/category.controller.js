@@ -3,38 +3,38 @@ const db = require ("../../models");
 
 module.exports = {
     getCategories: async (req, res) => {
-        const categories = await db.Category.findAll({
-            where: {
-                ParentId: null
-            },
-            include: [
-                {
-                    model: db.Tool,
-                    attributes: ['id', 'title', 'slug', 'status', 'views'],
-                    include: [
-                        {
-                            model: db.User,
-                            attributes: ['id', 'username']
-                        },
-                        {
-                            model: db.Tag,
-                            attributes: ['name'],
-                            through: { attributes: [] }
-                        },
-                        {
-                            model: db.Tutorial,
-                            attributes: ['id', 'title', 'status', 'views'],
-                            through: { attributes: [] }
-                        }
-                    ],
-                    through: { attributes: [] }
+        try {
+            const categories = await db.Category.findAll({
+                where: {
+                    ParentId: null
                 },
-            ],
-            attributes: ['id', 'name', 'description', 'views', 'createdAt'],
-            // order: [['views', 'DESC'], [db.Tool, 'title', 'ASC']]
-            order: [['createdAt', 'DESC']]
-        });
-        return res.json(categories);
+                include: [
+                    {
+                        model: db.Tool,
+                        attributes: ['id', 'title', 'slug', 'status', 'views'],
+                        include: [
+                            {
+                                model: db.User,
+                                attributes: ['id', 'username']
+                            },
+                            {
+                                model: db.Tag,
+                                attributes: ['name'],
+                                through: { attributes: [] }
+                            }
+                        ],
+                        through: { attributes: ['relevance'] }
+                    },
+                ],
+                attributes: ['id', 'name', 'description', 'views', 'createdAt'],
+                // order: [['views', 'DESC'], [db.Tool, 'title', 'ASC']]
+                order: [['createdAt', 'DESC']]
+            });
+            return res.json(categories);
+        } catch (e) {
+            console.log('Error', e);
+            return res.status(500).json({error: 'Error'});
+        }
     },
     getCategory: async (req, res) => {
         const id = req.params.id;
@@ -62,7 +62,7 @@ module.exports = {
                                 through: { attributes: [] }
                             }
                         ],
-                        through: { attributes: [] }
+                        through: { attributes: ['relevance'] }
                     },
                 ],
                 attributes: ['id', 'name', 'description', 'views', 'createdAt']
