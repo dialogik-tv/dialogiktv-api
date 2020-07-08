@@ -15,6 +15,11 @@ module.exports = {
                     model: db.Tutorial,
                     attributes: ['id', 'title', 'status', 'views'],
                     through: { attributes: [] }
+                },
+                {
+                    model: db.Category,
+                    attributes: ['id', 'name', 'views'],
+                    through: { attributes: [] }
                 }
             ],
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
@@ -41,6 +46,11 @@ module.exports = {
                 {
                     model: db.Tutorial,
                     attributes: ['id', 'title', 'status', 'views'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: db.Category,
+                    attributes: ['id', 'name', 'views'],
                     through: { attributes: [] }
                 }
             ],

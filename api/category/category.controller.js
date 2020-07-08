@@ -7,7 +7,30 @@ module.exports = {
             where: {
                 ParentId: null
             },
-            // attributes: ['id', 'title', 'description', 'views', 'createdAt'],
+            include: [
+                {
+                    model: db.Tool,
+                    attributes: ['id', 'title', 'slug', 'status', 'views'],
+                    include: [
+                        {
+                            model: db.User,
+                            attributes: ['id', 'username']
+                        },
+                        {
+                            model: db.Tag,
+                            attributes: ['name'],
+                            through: { attributes: [] }
+                        },
+                        {
+                            model: db.Tutorial,
+                            attributes: ['id', 'title', 'status', 'views'],
+                            through: { attributes: [] }
+                        }
+                    ],
+                    through: { attributes: [] }
+                },
+            ],
+            attributes: ['id', 'name', 'description', 'views', 'createdAt'],
             // order: [['views', 'DESC'], [db.Tool, 'title', 'ASC']]
             order: [['createdAt', 'DESC']]
         });
@@ -15,9 +38,40 @@ module.exports = {
     },
     getCategory: async (req, res) => {
         const id = req.params.id;
+        const error = 'Database error, please try again later or contact tech support';
 
         try {
-            const category = await db.Category.findByPk(id);
+            const category = await db.Category.findByPk(id, {
+                include: [
+                    {
+                        model: db.Tool,
+                        attributes: ['id', 'title', 'slug', 'status', 'views'],
+                        include: [
+                            {
+                                model: db.User,
+                                attributes: ['id', 'username']
+                            },
+                            {
+                                model: db.Tag,
+                                attributes: ['name'],
+                                through: { attributes: [] }
+                            },
+                            {
+                                model: db.Tutorial,
+                                attributes: ['id', 'title', 'status', 'views'],
+                                through: { attributes: [] }
+                            }
+                        ],
+                        through: { attributes: [] }
+                    },
+                ],
+                attributes: ['id', 'name', 'description', 'views', 'createdAt']
+            });
+            if(!category) {
+                return res.status(404).json({
+                    message: `No category found with id ${id}`
+                });
+            }
 
             // Increase view counter
             category.views++;
@@ -26,7 +80,7 @@ module.exports = {
             return res.json(category);
         } catch(e) {
             console.log(error, e);
-            return res.json(result);
+            return res.status(500).json( { error: error } );
         }
     },
     createCategory: async (req, res) => {
