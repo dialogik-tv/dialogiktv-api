@@ -81,7 +81,7 @@ module.exports = {
         req.body.UserId = req.decoded.user.id;
 
         const error = 'Database error, please try again later or contact tech support';
-        db.Collection.create(req.body, { fields: ['title', 'description'] })
+        db.Collection.create(req.body, { fields: ['title', 'description', 'UserId'] })
             .then( (collection) => {
                 return res.json( {
                     message: `Collection \`${req.body.title}\` successfully created`,

@@ -77,7 +77,7 @@ module.exports = {
 
                 const error = 'Database error, please try again later or contact tech support';
                 db.Tutorial.create(req.body, {
-                    fields: ['title', 'description', 'link']
+                    fields: ['title', 'description', 'link', 'UserId']
                 })
                     .then( (newTutorial) => {
                         // Add tag to tool
