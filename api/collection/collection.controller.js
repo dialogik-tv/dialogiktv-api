@@ -1,5 +1,6 @@
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
+const Discord = require('discord.js');
 
 module.exports = {
     getCollections: (req, res) => {
@@ -83,6 +84,13 @@ module.exports = {
         const error = 'Database error, please try again later or contact tech support';
         db.Collection.create(req.body, { fields: ['title', 'description', 'UserId'] })
             .then( (collection) => {
+                const discord = new Discord.Client();
+                discord.login(process.env.DISCORD_TOKEN);
+                discord.on('ready', () => {
+                    const channel = discord.channels.cache.get('733674475366776943');
+                    channel.send(`Neue Sammlung erstellt! https://dialogik.tv/collection/${collection.id}`);
+                });
+
                 return res.json( {
                     message: `Collection \`${req.body.title}\` successfully created`,
                     id: collection.id

@@ -1,6 +1,7 @@
 const { hashSync, genSaltSync, compareSync } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
+const Discord = require('discord.js');
 
 module.exports = {
     register: (req, res) => {
@@ -10,7 +11,16 @@ module.exports = {
         body.status = 0;
 
         db.User.create(body, { fields: ['username', 'firstname', 'lastname', 'email', 'password'] })
-            .then( (result) => res.json( { message: `User \`${body.username}\` successfully created` } ) )
+            .then( (result) => {
+                const discord = new Discord.Client();
+                discord.login(process.env.DISCORD_TOKEN);
+                discord.on('ready', () => {
+                    const channel = discord.channels.cache.get('733674475366776943');
+                    channel.send(`Neuer User registriert: ${body.username}`);
+                });
+
+                return res.json( { message: `User \`${body.username}\` successfully created` } )
+            })
             .catch( (e) => {
                 // Validation errors
                 if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {

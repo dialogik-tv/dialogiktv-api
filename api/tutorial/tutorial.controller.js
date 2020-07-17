@@ -1,5 +1,6 @@
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
+const Discord = require('discord.js');
 
 module.exports = {
     getTutorials: (req, res) => {
@@ -82,6 +83,14 @@ module.exports = {
                     .then( (newTutorial) => {
                         // Add tag to tool
                         tool.addTutorial(newTutorial);
+
+                        const discord = new Discord.Client();
+                        discord.login(process.env.DISCORD_TOKEN);
+                        discord.on('ready', () => {
+                            const channel = discord.channels.cache.get('733674475366776943');
+                            channel.send(`Neues Tutorial erstellt! https://dialogik.tv/tutorial/${newTutorial.id}`);
+                        });
+
                         return res.json( {
                             message: `Tutorial \`${req.body.title}\` successfully added to \`${tool.title}\``,
                             id: newTutorial.id

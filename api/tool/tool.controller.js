@@ -1,5 +1,6 @@
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
+const Discord = require('discord.js');
 
 module.exports = {
     getTools: (req, res) => {
@@ -78,7 +79,7 @@ module.exports = {
         const owner = req.decoded.user.id;
 
         try {
-            body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9\s!?]/g,'').replace(/ /g,"-")
+            body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9 ]/g,'').replace(/ /g,"-")
             const tool = await db.Tool.create(body, {
                 fields: ['title', 'description', 'slug', 'link', 'vendor', 'vendorLink', 'docLink']
             });
@@ -86,6 +87,14 @@ module.exports = {
             tool.status = 50;
             tool.UserId = owner;
             await tool.save();
+
+            const discord = new Discord.Client();
+            discord.login(process.env.DISCORD_TOKEN);
+            discord.on('ready', () => {
+                const channel = discord.channels.cache.get('733674475366776943');
+                channel.send(`Neues Tool erstellt! https://dialogik.tv/tool/${tool.slug}`);
+            });
+
             return res.json( {
                 message: `Tool ${tool.title} successfully created`,
                 slug: tool.slug
