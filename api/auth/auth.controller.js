@@ -10,7 +10,7 @@ module.exports = {
         body.password = hashSync(body.password, salt);
         body.status = 0;
 
-        db.User.create(body, { fields: ['username', 'firstname', 'lastname', 'email', 'password'] })
+        db.User.create(body, { fields: ['username', 'firstname', 'lastname', 'email', 'password', 'status'] })
             .then( (result) => {
                 const discord = new Discord.Client();
                 discord.login(process.env.DISCORD_TOKEN);
