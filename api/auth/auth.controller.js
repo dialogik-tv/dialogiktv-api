@@ -16,7 +16,14 @@ module.exports = {
                 discord.login(process.env.DISCORD_TOKEN);
                 discord.on('ready', () => {
                     const channel = discord.channels.cache.get('733674475366776943');
-                    channel.send(`Neuer User registriert: ${body.username}`);
+
+                    const embed = new Discord.MessageEmbed()
+                        .setColor('#00acee')
+                        .setTitle('Neuer User')
+                        .addField('Username', body.username)
+                        .setTimestamp()
+
+                    channel.send(embed);
                 });
 
                 return res.json( { message: `User \`${body.username}\` successfully created` } )

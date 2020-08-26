@@ -78,8 +78,9 @@ module.exports = {
         } );
     },
     createCollection: (req, res) => {
-        // Add owner ID to payload
+        // Add owner ID to payload and extract username
         req.body.UserId = req.decoded.user.id;
+        const username  = req.decoded.user.username;
 
         const error = 'Database error, please try again later or contact tech support';
         db.Collection.create(req.body, { fields: ['title', 'description', 'UserId'] })
@@ -88,7 +89,16 @@ module.exports = {
                 discord.login(process.env.DISCORD_TOKEN);
                 discord.on('ready', () => {
                     const channel = discord.channels.cache.get('733674475366776943');
-                    channel.send(`Neue Sammlung erstellt! https://dialogik.tv/collection/${collection.id}`);
+
+                    const embed = new Discord.MessageEmbed()
+                        .setColor('#00acee')
+                        .setTitle(`Neue Sammlung: ${collection.title}`)
+                        .setDescription(collection.description)
+                        .setURL(`https://dialogik.tv/collection/${collection.id}`)
+                        .setTimestamp()
+                        .setFooter(`Erstellt von \`${username}\``)
+
+                    channel.send(embed);
                 });
 
                 return res.json( {

@@ -64,8 +64,10 @@ module.exports = {
         const toolId = req.body.tool;
         delete req.body.tool;
 
-        // Add owner ID to payload
+        // Add owner ID to payload and extract username
         req.body.UserId = req.decoded.user.id;
+
+        const username = req.decoded.user.username;
 
         // Find according tool
         db.Tool.findByPk(toolId)
@@ -88,7 +90,16 @@ module.exports = {
                         discord.login(process.env.DISCORD_TOKEN);
                         discord.on('ready', () => {
                             const channel = discord.channels.cache.get('733674475366776943');
-                            channel.send(`Neues Tutorial erstellt! https://dialogik.tv/tutorial/${newTutorial.id}`);
+
+                            const embed = new Discord.MessageEmbed()
+                                .setColor('#00acee')
+                                .setTitle(`Neues Tutorial: ${newTutorial.title}`)
+                                .setDescription(newTutorial.description)
+                                .setURL(`https://dialogik.tv/tutorial/${newTutorial.id}`)
+                                .setTimestamp()
+                                .setFooter(`Erstellt von \`${username}\``)
+
+                            channel.send(embed);
                         });
 
                         return res.json( {

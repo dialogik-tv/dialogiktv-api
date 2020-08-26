@@ -75,8 +75,9 @@ module.exports = {
         });
     },
     createTool: async (req, res) => {
-        const body  = req.body;
-        const owner = req.decoded.user.id;
+        const body     = req.body;
+        const owner    = req.decoded.user.id;
+        const username = req.decoded.user.username;
 
         try {
             body.slug = body.title.toLowerCase().replace(/[^A-Za-z0-9 ]/g,'').replace(/ /g,"-")
@@ -92,7 +93,16 @@ module.exports = {
             discord.login(process.env.DISCORD_TOKEN);
             discord.on('ready', () => {
                 const channel = discord.channels.cache.get('733674475366776943');
-                channel.send(`Neues Tool erstellt! https://dialogik.tv/tool/${tool.slug}`);
+
+                const embed = new Discord.MessageEmbed()
+                    .setColor('#00acee')
+                    .setTitle(`Neues Tool: ${tool.title}`)
+                    .setDescription(tool.description)
+                    .setURL(`https://dialogik.tv/tool/${tool.slug}`)
+                    .setTimestamp()
+                    .setFooter(`Erstellt von \`${username}\``)
+
+                channel.send(embed);
             });
 
             return res.json( {
