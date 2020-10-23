@@ -1,4 +1,7 @@
 'use strict'
+
+require("dotenv").config();
+
 /**
  * New Relic agent configuration.
  *
@@ -13,7 +16,23 @@ exports.config = {
     /**
      * Your New Relic license key.
      */
-    license_key: '202003e703c4aa692b49b9c8b3646247a8d1NRAL',
+    license_key: process.env.NEW_RELIC_LICENSE_KEY,
+    /**
+     * This setting controls distributed tracing.
+     * Distributed tracing lets you see the path that a request takes through your
+     * distributed system. Enabling distributed tracing changes the behavior of some
+     * New Relic features, so carefully consult the transition guide before you enable
+     * this feature: https://docs.newrelic.com/docs/transition-guide-distributed-tracing
+     * Default is true.
+     */
+    distributed_tracing: {
+        /**
+         * Enables/disables distributed tracing.
+         *
+         * @env NEW_RELIC_DISTRIBUTED_TRACING_ENABLED
+         */
+        enabled: true
+    },
     logging: {
         /**
          * Level at which to log. 'trace' is most useful to New Relic when diagnosing
