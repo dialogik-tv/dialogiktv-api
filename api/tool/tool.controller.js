@@ -1,6 +1,7 @@
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
 const Discord = require('discord.js');
+const { Op } = require("sequelize");
 
 module.exports = {
     getTools: (req, res) => {
@@ -22,6 +23,46 @@ module.exports = {
             order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             return res.json(result)
+        } );
+    },
+    searchTools: (req, res) => {
+        const filter = JSON.parse(req.params.filter);
+        db.Tool.scope('published').findAll({
+            include: [
+                {
+                    model: db.User,
+                    attributes: ['id', 'username']
+                },
+                {
+                    model: db.Tag,
+                    attributes: ['name'],
+                    through: { attributes: [] },
+                    where: {
+                        name: {
+                            [Op.and]: filter.tag
+                        }
+                    }
+                },
+                {
+                    model: db.Category,
+                    attributes: ['id', 'name', 'views'],
+                    through: { attributes: ['relevance'] },
+                    where: {       
+                        id: {
+                            [Op.and]: filter.category
+                        }
+                    }
+                }
+            ],
+            where: {
+                title: {
+                    [Op.like]: `%${filter.term}%`,
+                }
+            },
+            attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
+            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
+        }).then( (result) => {
+            return res.json(result.length)
         } );
     },
     getToolByIdOrSlug: (req, res) => {
