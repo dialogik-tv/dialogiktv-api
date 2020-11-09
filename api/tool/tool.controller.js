@@ -47,7 +47,7 @@ module.exports = {
                     model: db.Category,
                     attributes: ['id', 'name', 'views'],
                     through: { attributes: ['relevance'] },
-                    where: {       
+                    where: {
                         id: {
                             [Op.and]: filter.category
                         }
@@ -62,7 +62,7 @@ module.exports = {
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
             order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
-            return res.json(result.length)
+            return res.json(result)
         } );
     },
     getToolByIdOrSlug: (req, res) => {
