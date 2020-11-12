@@ -10,7 +10,7 @@ module.exports = {
         if(typeof filter !== 'undefined') {
             filter = JSON.parse(filter);
         } else {
-            filter = { "term": "" };
+            filter = { "term": "", "category": [], "tag": [] };
         }
 
         db.Tool.scope('published').findAll({
@@ -35,27 +35,46 @@ module.exports = {
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
             order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
-            // Manually filter out elements with corresponding categories
-            const categoryFilteredResult = [];
-            for(const element of result) {
-                for(const category of element.dataValues.Categories) {
-                    if(filter.category.indexOf(category.dataValues.id) > -1) {
-                        categoryFilteredResult.push(element);
-                        break;
+            let counter = 0;
+
+            let categoryFilteredResult = [];
+            if(filter.category.length > 0) {
+                for(const row of result) {
+                    counter = 0;
+                    for(const category of row.dataValues.Categories) {
+                        if(counter >= filter.category.length) {
+                            break;
+                        }
+                        if(filter.category.indexOf(category.dataValues.id) > -1) {
+                            counter++;
+                        }
+                    }
+                    if(counter >= filter.category.length) {
+                        categoryFilteredResult.push(row);
                     }
                 }
+            } else {
+                categoryFilteredResult = result;
             }
 
-            // Manually filter out elements with corresponding tags
-            const filteredResult = [];
-            for(const element of categoryFilteredResult) {
-                for(const tag of element.dataValues.Tags) {
-                    console.log(`Check if ${tag.dataValues.name} is in filter`, filter.tag);
-                    if(filter.tag.indexOf(tag.dataValues.name) > -1) {
-                        filteredResult.push(element);
-                        break;
+            let filteredResult = [];
+            if(filter.tag.length > 0) {
+                for(const row of result) {
+                    counter = 0;
+                    for(const tag of row.dataValues.Tags) {
+                        if(counter >= filter.tag.length) {
+                            break;
+                        }
+                        if(filter.tag.indexOf(tag.dataValues.name) > -1) {
+                            counter++;
+                        }
+                    }
+                    if(counter >= filter.tag.length) {
+                        filteredResult.push(row);
                     }
                 }
+            } else {
+                filteredResult = categoryFilteredResult;
             }
 
             return res.json(filteredResult);
