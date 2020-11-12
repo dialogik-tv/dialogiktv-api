@@ -59,7 +59,7 @@ module.exports = {
 
             let filteredResult = [];
             if(filter.tag.length > 0) {
-                for(const row of result) {
+                for(const row of categoryFilteredResult) {
                     counter = 0;
                     for(const tag of row.dataValues.Tags) {
                         if(counter >= filter.tag.length) {
