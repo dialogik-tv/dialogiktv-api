@@ -5,6 +5,14 @@ const { Op } = require("sequelize");
 
 module.exports = {
     getTools: (req, res) => {
+        const error = 'Database error, could not find tool';
+        let filter = req.params.filter;
+        if(typeof filter !== 'undefined') {
+            filter = JSON.parse(filter);
+        } else {
+            filter = { "term": "" };
+        }
+
         db.Tool.scope('published').findAll({
             include: [
                 { model: db.User, attributes: ['id', 'username']},
@@ -19,41 +27,6 @@ module.exports = {
                     through: { attributes: ['relevance'] }
                 }
             ],
-            attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
-            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
-        }).then( (result) => {
-            return res.json(result)
-        } );
-    },
-    searchTools: (req, res) => {
-        const filter = JSON.parse(req.params.filter);
-        db.Tool.scope('published').findAll({
-            include: [
-                {
-                    model: db.User,
-                    attributes: ['id', 'username']
-                },
-                {
-                    model: db.Tag,
-                    attributes: ['name'],
-                    through: { attributes: [] },
-                    where: {
-                        name: {
-                            [Op.and]: filter.tag
-                        }
-                    }
-                },
-                {
-                    model: db.Category,
-                    attributes: ['id', 'name', 'views'],
-                    through: { attributes: ['relevance'] },
-                    where: {
-                        id: {
-                            [Op.and]: filter.category
-                        }
-                    }
-                }
-            ],
             where: {
                 title: {
                     [Op.like]: `%${filter.term}%`,
@@ -62,8 +35,34 @@ module.exports = {
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
             order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
-            return res.json(result)
-        } );
+            // Manually filter out elements with corresponding categories
+            const categoryFilteredResult = [];
+            for(const element of result) {
+                for(const category of element.dataValues.Categories) {
+                    if(filter.category.indexOf(category.dataValues.id) > -1) {
+                        categoryFilteredResult.push(element);
+                        break;
+                    }
+                }
+            }
+
+            // Manually filter out elements with corresponding tags
+            const filteredResult = [];
+            for(const element of categoryFilteredResult) {
+                for(const tag of element.dataValues.Tags) {
+                    console.log(`Check if ${tag.dataValues.name} is in filter`, filter.tag);
+                    if(filter.tag.indexOf(tag.dataValues.name) > -1) {
+                        filteredResult.push(element);
+                        break;
+                    }
+                }
+            }
+
+            return res.json(filteredResult);
+        } ).catch( (e) => {
+            console.log(error, e);
+            return res.status(500).json( { error: error } );
+        });
     },
     getToolByIdOrSlug: (req, res) => {
         const slug = req.params.slug;

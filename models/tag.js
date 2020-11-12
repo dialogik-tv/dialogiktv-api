@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     // Associations
     Tag.associate = function(models) {
         Tag.belongsToMany(models.Tool, { through: 'ToolTag' });
+        Tag.belongsToMany(models.Tool, { through: 'ToolTag' });
     };
 
     // Modify JSON output
