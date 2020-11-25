@@ -127,7 +127,7 @@ module.exports = {
                         through: { attributes: ['relevance'] }
                     }
                 ],
-                attributes: ['id', 'title', 'description'],
+                attributes: ['id', 'title', 'description', 'slug'],
                 order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
             }).then( (toolsToCompare) => {
                 let collector = [];
