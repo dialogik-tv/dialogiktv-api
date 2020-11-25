@@ -144,10 +144,7 @@ module.exports = {
                         const check = _.findIndex(collector, function(c) { return c.tool.id == currId; });
                         if(check < 0) {
                             collector.push({
-                                'tool': {
-                                    'id': currId,
-                                    'title': toolToCompare.dataValues.title
-                                },
+                                'tool': toolToCompare,
                                 sharedTags: [],
                                 similarity: 0
                             });
