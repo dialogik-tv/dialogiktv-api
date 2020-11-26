@@ -4,6 +4,7 @@ const {
     createTool,
     getTools,
     getToolByIdOrSlug,
+    getSimilarTools,
     updateTool,
     deleteTool
 } = require("./tool.controller");
@@ -11,6 +12,7 @@ const {
 router.post("/tool/create", checkToken, createTool);
 router.get("/tools", getTools);
 router.get("/tools/:filter", getTools);
+router.get("/tool/similar/:id", getSimilarTools);
 router.get("/tool/:slug", getToolByIdOrSlug);
 router.patch("/tool/edit/:id", checkToken, updateTool);
 router.delete("/tool/delete/:id", checkToken, deleteTool);

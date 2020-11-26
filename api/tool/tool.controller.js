@@ -1,7 +1,9 @@
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
-const Discord = require('discord.js');
+const Discord = require("discord.js");
 const { Op } = require("sequelize");
+
+const _ = require("lodash");
 
 module.exports = {
     getTools: (req, res) => {
@@ -79,6 +81,104 @@ module.exports = {
 
             return res.json(filteredResult);
         } ).catch( (e) => {
+            console.log(error, e);
+            return res.status(500).json( { error: error } );
+        });
+    },
+    getSimilarTools: (req, res) => {
+        const id = req.params.id;
+        const error = 'Database error, could not get tool';
+
+        // Fetch tool to be checked for similarity
+        db.Tool.findOne({
+            where: { id: id },
+            include: [
+                {
+                    model: db.Tag,
+                    attributes: ['name'],
+                    through: { attributes: [] }
+                },
+                {
+                    model: db.Category,
+                    attributes: ['id', 'name', 'views'],
+                    through: { attributes: ['relevance'] }
+                }
+            ],
+            attributes: ['id', 'title'],
+            order: [[db.Tag, 'name', 'ASC']]
+        }).then( (tool) => {
+            if(!tool) {
+                return res.status(404).json({
+                    message: `No tool found with id ${id}`
+                })
+            }
+            
+            // Fetch tools to compare to
+            db.Tool.scope('published').findAll({
+                include: [
+                    {
+                        model: db.Tag,
+                        attributes: ['name'],
+                        through: { attributes: [] }
+                    },
+                    {
+                        model: db.Category,
+                        attributes: ['id', 'name', 'views'],
+                        through: { attributes: ['relevance'] }
+                    }
+                ],
+                attributes: ['id', 'title', 'description', 'slug'],
+                order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
+            }).then( (toolsToCompare) => {
+                let collector = [];
+
+                // Loop over all tags (of root tool)
+                for(const tag of tool.dataValues.Tags) {
+                    for(const toolToCompare of toolsToCompare) {
+                        const currId = toolToCompare.dataValues.id;
+
+                        // Don't compare to self
+                        if (id === currId) { continue; }                    
+
+                        // Check if tool is already in result container and add if not
+                        const check = _.findIndex(collector, function(c) { return c.tool.id == currId; });
+                        if(check < 0) {
+                            collector.push({
+                                'tool': toolToCompare,
+                                sharedTags: [],
+                                similarity: 0
+                            });
+                        }
+
+                        // Loop over all tags and compare, add to result container if appropriate
+                        for(const tagToCompare of toolToCompare.dataValues.Tags) {
+                            if(tagToCompare.dataValues.name === tag.dataValues.name) {
+                                const index = _.findIndex(collector, function(c) { return c.tool.id == currId; });
+                                if(index > 0) {
+                                    collector[index].sharedTags.push(tag.dataValues.name);
+                                    collector[index].similarity++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Sort by similarity (desc)
+                collector.sort((a, b) => {
+                    return b.similarity - a.similarity;
+                });
+
+                const result = {
+                    'tool': tool,
+                    'similarTools': collector
+                }
+
+                return res.json(result);
+            } ).catch( (e) => {
+                console.log(error, e);
+                return res.status(500).json( { error: error } );
+            });
+        }).catch( (e) => {
             console.log(error, e);
             return res.status(500).json( { error: error } );
         });
