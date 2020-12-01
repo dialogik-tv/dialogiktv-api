@@ -85,6 +85,27 @@ module.exports = {
             return res.status(500).json( { error: error } );
         });
     },
+    getUnpublishedTools: async (req, res) => {
+        const error = 'Database error, could not find tool';
+        const isAdmin = req.decoded.user.isAdmin;
+        if(!isAdmin) {
+            return res.status(403).json( { error: 'You must be Administrator in order to show all unpublished tools!' } );
+        }
+
+        try {
+            const tools = await db.Tool.scope('unpublished').findAll({
+                include: [
+                    { model: db.User, attributes: ['id', 'username']}
+                ],
+                attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
+                order: [['createdAt', 'ASC']]
+            });
+            return res.json(tools);
+        } catch(e) {
+            console.log(error, e);
+            return res.status(500).json( { error: error } );
+        }
+    },
     getSimilarTools: (req, res) => {
         const id = req.params.id;
         const error = 'Database error, could not get tool';
@@ -244,18 +265,17 @@ module.exports = {
                 fields: ['title', 'description', 'slug', 'link', 'vendor', 'vendorLink', 'docLink']
             });
             tool.slug = tool.slug + '-' + tool.id;
-            tool.status = 50;
+            tool.status = 0;
             tool.UserId = owner;
             await tool.save();
-
+            
             const discord = new Discord.Client();
             discord.login(process.env.DISCORD_TOKEN);
             discord.on('ready', () => {
                 const channel = discord.channels.cache.get('733674475366776943');
-
                 const embed = new Discord.MessageEmbed()
                     .setColor('#00acee')
-                    .setTitle(`Neues Tool: ${tool.title}`)
+                    .setTitle(`Neues Tool vorgeschlagen: ${tool.title}`)
                     .setDescription(tool.description)
                     .setURL(`https://dialogik.tv/tool/${tool.slug}`)
                     .setTimestamp()
@@ -265,7 +285,7 @@ module.exports = {
             });
 
             return res.json( {
-                message: `Tool ${tool.title} successfully created`,
+                message: `Tool ${tool.title} successfully submitted, it will be published after review.`,
                 slug: tool.slug
             } )
         } catch (e) {
@@ -325,6 +345,67 @@ module.exports = {
             }
 
             const error = `Error updating Tool \`${id}\``;
+            console.log(error, e);
+            return res.status(500).json( {error:error} );
+        }
+    },
+    publishTool: async (req, res) => {
+        const error = 'Database error, could not find tool';
+
+        // Check if user is admin
+        const isAdmin = req.decoded.user.isAdmin;
+        if(!isAdmin) {
+            return res.status(403).json( { error: 'You must be Administrator in order to publish this tool!' } );
+        }
+
+        // Parse tool ID
+        const id = req.params.id;
+
+        try {
+            // Fetch tool
+            const tool = await db.Tool.findByPk(id);
+
+            // 404 if not found
+            if(!tool) { return res.status(404).json({ error: 'Tool not found' }); }
+            
+            // Set status to 50 (= publish)
+            tool.status = 50;
+            await tool.save();
+
+            const message = `Tool \`${tool.title}\` successfully published`;
+            return res.json({message: message});
+        } catch (e) {
+            const error = `Error publishing Tool \`${id}\``;
+            console.log(error, e);
+            return res.status(500).json( {error:error} );
+        }
+    },
+    rejectTool: async (req, res) => {
+        const error = 'Database error, could not find tool';
+
+        // Check if user is admin
+        const isAdmin = req.decoded.user.isAdmin;
+        if(!isAdmin) {
+            return res.status(403).json( { error: 'You must be Administrator in order to reject this tool!' } );
+        }
+
+        // Parse tool ID
+        const id = req.params.id;
+
+        try {
+            // Fetch tool
+            const tool = await db.Tool.findByPk(id);
+
+            // 404 if not found
+            if(!tool) { return res.status(404).json({ error: 'Tool not found' }); }
+            
+            // Set status to 50 (= publish)
+            tool.status = -50;
+            await tool.save();
+            const message = `Tool \`${tool.title}\` successfully rejected`;
+            return res.json({message: message});
+        } catch (e) {
+            const error = `Error publishing Tool \`${id}\``;
             console.log(error, e);
             return res.status(500).json( {error:error} );
         }

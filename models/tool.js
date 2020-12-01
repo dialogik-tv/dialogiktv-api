@@ -62,6 +62,11 @@ module.exports = (sequelize, DataTypes) => {
                 where: {
                     status: 50
                 }
+            },
+            unpublished: {
+                where: {
+                    status: 0
+                }
             }
         },
     });
