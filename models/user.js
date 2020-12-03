@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             unique: true,
             validate: {
-                isAlphanumeric: true,
+                is: /^[A-Za-zÀ-ž\u0370-\u03FF\u0400-\u04FF]*$/,
                 notNull: true,
                 notEmpty: true,
                 len: [4, 24],
@@ -25,15 +25,17 @@ module.exports = (sequelize, DataTypes) => {
         },
         firstname: {
             type: DataTypes.STRING,
-            // validate: {
-            //     isAlphanumeric: true
-            // }
+            allowNull: true,
+            validate: {
+                len: [2, 30]
+            }
         },
         lastname: {
             type: DataTypes.STRING,
-            // validate: {
-            //     isAlphanumeric: true
-            // }
+            allowNull: true,
+            validate: {
+                len: [2, 40]
+            }
         },
         email: {
             allowNull: false,
