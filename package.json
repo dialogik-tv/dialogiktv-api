@@ -4,6 +4,7 @@
     "private": true,
     "description": "Based on Node.js with Express.js and a sequelized MySQL database, this API servers as the main data provider for the dialogikTV frontend webapplication.",
     "main": "app.js",
+    "license": "Apache-2.0",
     "scripts": {
         "start": "nodemon app.js",
         "test": "echo \"Error: no test specified\" && exit 1",
