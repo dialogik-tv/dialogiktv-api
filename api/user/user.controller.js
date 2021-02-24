@@ -54,8 +54,9 @@ module.exports = {
 
         // Make sure that only specified attributes can be updated
         // (e.g. users shall not be able to update status or isAdmin)
-        const allowedKeys = ['firstname', 'lastname', 'email', 'password'];
+        const allowedKeys = ['firstname', 'lastname', 'email', 'password', 'competenceSoftware', 'competenceHardware', 'about'];
         const usedKeys = Object.keys(body);
+
         for(const key in usedKeys) {
             if(!allowedKeys.includes(usedKeys[key])) {
                 delete body[usedKeys[key]];
@@ -68,11 +69,20 @@ module.exports = {
             body.password = hashSync(body.password, salt);
         }
 
+        // Cast competence values to integers
+        if(typeof body.competenceSoftware == 'string') {
+            body.competenceSoftware = parseInt(body.competenceSoftware);
+        }
+        if(typeof body.competenceHardware == 'string') {
+            body.competenceHardware = parseInt(body.competenceHardware);
+        }
+
         try {
             const user = await db.User.findByPk(owner);
             for(const [key, val] of Object.entries(req.body)) {
                 user[key] = val;
             }
+            
             await user.save();
             const message = `User ${username} successfully updated`;
             return res.json({message: message});

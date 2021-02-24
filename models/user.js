@@ -57,6 +57,31 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: false,
             type: DataTypes.BOOLEAN
+        },
+        competenceSoftware: {
+            allowNull: true,
+            type: DataTypes.INTEGER(3),
+            validate: {
+                min: 0,
+                max: 100
+            }
+        },
+        competenceHardware: {
+            allowNull: true,
+            type: DataTypes.INTEGER(3),
+            validate: {
+                min: 0,
+                max: 100
+            }
+        },
+        competenceValidated: {
+            allowNull: false,
+            defaultValue: false,
+            type: DataTypes.BOOLEAN
+        },
+        about: {
+            allowNull: true,
+            type: DataTypes.TEXT
         }
     }, {
         scopes: {}
