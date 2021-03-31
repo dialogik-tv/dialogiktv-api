@@ -1,10 +1,16 @@
 const { hashSync, genSaltSync } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require ("../../models");
+const { Op } = require("sequelize");
 
 module.exports = {
     getUsers: (req, res) => {
         db.User.findAll().then( (result) => res.json(result) );
+    },
+    getEngineers: (req, res) => {
+        db.User.scope('engineers').findAll({
+            attributes: ['username', 'competenceSoftware', 'competenceHardware', 'about']
+        }).then( (result) => res.json(result) );
     },
     getMe: (req, res) => {
         const owner = req.decoded.user.id;

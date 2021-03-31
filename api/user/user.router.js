@@ -4,6 +4,7 @@ const {
     // getUserById,
     getUserByUsername,
     getUsers,
+    getEngineers,
     getMe,
     updateUser,
     deleteUser
@@ -16,6 +17,7 @@ router.delete("/user/delete", checkToken, deleteUser);
 
 // Public routes
 router.get("/users", checkToken, getUsers);
+router.get("/users/engineers", getEngineers);
 router.get("/user/:username", getUserByUsername);
 
 module.exports = router;

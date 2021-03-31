@@ -1,5 +1,6 @@
 'use strict';
 
+const { Op } = require("sequelize");
 const Version = require('sequelize-version');
 
 module.exports = (sequelize, DataTypes) => {
@@ -84,7 +85,23 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT
         }
     }, {
-        scopes: {}
+        scopes: {
+            engineers: {
+                where: {
+                    [Op.and]: [
+                        {
+                            competenceSoftware: {
+                                [Op.gte]: 0
+                            },
+                            competenceHardware: {
+                                [Op.gte]: 0
+                            },
+                            competenceValidated: true
+                        }
+                    ]
+                }
+            }
+        }
     });
 
     // Associations
