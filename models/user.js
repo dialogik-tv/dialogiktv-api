@@ -59,6 +59,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: false,
             type: DataTypes.BOOLEAN
         },
+        twitchChannel: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: true
+        },
         competenceSoftware: {
             allowNull: true,
             type: DataTypes.INTEGER(3),

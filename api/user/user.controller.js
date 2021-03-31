@@ -9,7 +9,7 @@ module.exports = {
     },
     getEngineers: (req, res) => {
         db.User.scope('engineers').findAll({
-            attributes: ['username', 'competenceSoftware', 'competenceHardware', 'about']
+            attributes: ['username', 'twitchChannel', 'competenceSoftware', 'competenceHardware', 'about']
         }).then( (result) => res.json(result) );
     },
     getMe: (req, res) => {
@@ -88,7 +88,7 @@ module.exports = {
             for(const [key, val] of Object.entries(req.body)) {
                 user[key] = val;
             }
-            
+
             await user.save();
             const message = `User ${username} successfully updated`;
             return res.json({message: message});
