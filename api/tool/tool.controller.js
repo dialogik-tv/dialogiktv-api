@@ -35,7 +35,7 @@ module.exports = {
                 }
             },
             attributes: ['id', 'title', 'description', 'slug', 'docLink', 'vendor', 'vendorLink', 'views', 'status', 'createdAt'],
-            order: [['title', 'ASC'], [db.Tag, 'name', 'ASC']]
+            order: [['createdAt', 'DESC'], [db.Tag, 'name', 'ASC']]
         }).then( (result) => {
             let counter = 0;
 
