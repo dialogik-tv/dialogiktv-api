@@ -332,9 +332,16 @@ module.exports = {
             for(const [key, val] of Object.entries(req.body)) {
                 tool[key] = val;
             }
+
+            tool.slug = tool.title.toLowerCase().replace(/[^A-Za-z0-9 ]/g,'').replace(/ /g,"-")
+            tool.slug += '-' + tool.id;
+
             await tool.save();
             const message = `Tool \`${tool.title}\` successfully updated`;
-            return res.json({message: message});
+            return res.json({
+                message: message,
+                slug: tool.slug
+            });
         } catch (e) {
             // Validation errors
             if(e.name == 'SequelizeValidationError' && typeof e.errors !== 'undefined') {
